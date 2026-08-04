@@ -1,3 +1,21 @@
 import { Routes } from '@angular/router';
+import { LoginComponent } from './features/auth/login/login'; 
 
-export const routes: Routes = [];
+export const routes: Routes = [
+   { 
+    path: '', 
+    redirectTo: 'login', 
+    pathMatch: 'full' 
+  },
+  
+  // Define a rota do login
+  { 
+    path: 'login', 
+    component: LoginComponent
+  },
+
+  { 
+    path: '**', 
+    redirectTo: 'login' 
+  }
+];
