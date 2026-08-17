@@ -1,0 +1,164 @@
+<div class="px-4 sm:px-6 py-6 space-y-5 max-w-[1400px] mx-auto">
+  
+  <!-- Page header -->
+  <div class="flex items-center justify-between gap-4">
+    <div>
+      <h1 class="text-[22px] font-bold text-[#0D1B3E] tracking-tight leading-tight">Pacientes</h1>
+      <p class="text-[13px] text-[#5A6A85] mt-1">Gerencie seus pacientes e acesse os prontuários</p>
+    </div>
+  </div>
+
+  <!-- Stat tiles -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="bg-white rounded-xl border border-[#DDE4F0] px-5 py-4 flex items-center gap-3 shadow-[0_1px_4px_rgba(13,27,62,0.05)]">
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-[17px] font-extrabold bg-[#EBF3FF] text-[#1565C0]">142</div>
+      <div class="text-[12px] text-[#5A6A85] font-medium leading-tight">Total de Pacientes</div>
+    </div>
+    <div class="bg-white rounded-xl border border-[#DDE4F0] px-5 py-4 flex items-center gap-3 shadow-[0_1px_4px_rgba(13,27,62,0.05)]">
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-[17px] font-extrabold bg-[#DCFCE7] text-[#15803D]">98</div>
+      <div class="text-[12px] text-[#5A6A85] font-medium leading-tight">Em Acompanhamento</div>
+    </div>
+    <div class="bg-white rounded-xl border border-[#DDE4F0] px-5 py-4 flex items-center gap-3 shadow-[0_1px_4px_rgba(13,27,62,0.05)]">
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-[17px] font-extrabold bg-[#FEF3C7] text-[#B45309]">12</div>
+      <div class="text-[12px] text-[#5A6A85] font-medium leading-tight">Atenção Requerida</div>
+    </div>
+    <div class="bg-white rounded-xl border border-[#DDE4F0] px-5 py-4 flex items-center gap-3 shadow-[0_1px_4px_rgba(13,27,62,0.05)]">
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-[17px] font-extrabold bg-[#F3E8FF] text-[#7C3AED]">7</div>
+      <div class="text-[12px] text-[#5A6A85] font-medium leading-tight">Novos este mês</div>
+    </div>
+  </div>
+
+  <!-- Search + filter bar -->
+  <div class="bg-white rounded-xl border border-[#DDE4F0] px-5 py-4 shadow-[0_1px_4px_rgba(13,27,62,0.05)]">
+    <div class="flex items-center gap-3 flex-wrap">
+      
+      <div class="relative flex-1 min-w-[240px]">
+        <i class="bi bi-search absolute left-3.5 top-1/2 -translate-y-1/2 text-[#5A6A85]"></i>
+        <input type="text" [(ngModel)]="search" placeholder="Buscar por nome, CPF ou nº do prontuário..."
+               class="w-full pl-10 pr-10 h-10 text-[13px] border border-[#DDE4F0] rounded-lg text-[#0D1B3E] placeholder:text-[#5A6A85] bg-white focus:outline-none focus:border-[#1565C0]/40 focus:ring-2 focus:ring-[#1565C0]/10 transition">
+        <button *ngIf="search" (click)="search = ''" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#5A6A85] hover:text-[#0D1B3E] transition-colors">
+          <i class="bi bi-x-lg text-xs"></i>
+        </button>
+      </div>
+
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <i class="bi bi-funnel text-[#5A6A85]"></i>
+        
+        <div class="relative">
+          <select [(ngModel)]="statusFilter" class="h-10 pl-3.5 pr-8 text-[13px] border border-[#DDE4F0] rounded-lg text-[#0D1B3E] bg-white focus:outline-none focus:border-[#1565C0]/40 focus:ring-2 focus:ring-[#1565C0]/10 transition appearance-none font-medium cursor-pointer">
+            <option *ngFor="let o of statusOptions" [value]="o">{{ o }}</option>
+          </select>
+          <i class="bi bi-chevron-down absolute right-2.5 top-1/2 -translate-y-1/2 text-[#5A6A85] text-xs pointer-events-none"></i>
+        </div>
+
+        <div class="relative">
+          <select [(ngModel)]="consultFilter" class="h-10 pl-3.5 pr-8 text-[13px] border border-[#DDE4F0] rounded-lg text-[#0D1B3E] bg-white focus:outline-none focus:border-[#1565C0]/40 focus:ring-2 focus:ring-[#1565C0]/10 transition appearance-none font-medium cursor-pointer">
+            <option *ngFor="let o of consultOptions" [value]="o">{{ o }}</option>
+          </select>
+          <i class="bi bi-chevron-down absolute right-2.5 top-1/2 -translate-y-1/2 text-[#5A6A85] text-xs pointer-events-none"></i>
+        </div>
+
+        <button (click)="clearFilters()" class="text-[13px] text-[#5A6A85] hover:text-[#1565C0] font-medium transition-colors px-1 whitespace-nowrap">
+          Limpar filtros
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="bg-white rounded-xl border border-[#DDE4F0] overflow-hidden shadow-[0_1px_4px_rgba(13,27,62,0.05)] overflow-x-auto">
+    <table class="w-full min-w-[800px]">
+      <thead>
+        <tr class="border-b border-[#DDE4F0] bg-[#FAFBFD]">
+          <th class="px-6 py-3.5 text-[11px] font-semibold text-[#5A6A85] uppercase tracking-wider text-left">Paciente</th>
+          <th class="px-6 py-3.5 text-[11px] font-semibold text-[#5A6A85] uppercase tracking-wider text-left">Contato</th>
+          <th class="px-6 py-3.5 text-[11px] font-semibold text-[#5A6A85] uppercase tracking-wider text-left">Última Consulta</th>
+          <th class="px-6 py-3.5 text-[11px] font-semibold text-[#5A6A85] uppercase tracking-wider text-left">Status</th>
+          <th class="px-6 py-3.5 text-[11px] font-semibold text-[#5A6A85] uppercase tracking-wider text-right">Ações</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-[#F0F4FA]">
+        <tr *ngFor="let p of filteredPatients" class="hover:bg-[#FAFBFD] transition-colors relative">
+          
+          <!-- Paciente -->
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full flex items-center justify-center text-white text-[12px] font-bold shrink-0" [ngStyle]="{'background': AVATAR_GRADIENTS[p.avatarIdx]}">
+                {{ p.initials }}
+              </div>
+              <div>
+                <div class="text-[13px] font-semibold text-[#0D1B3E]">{{ p.name }}</div>
+                <div class="text-[11px] text-[#5A6A85] mt-0.5">
+                  Prontuário: {{ p.prontuario }} · {{ p.age }} anos · {{ p.gender === 'M' ? 'Masculino' : 'Feminino' }}
+                </div>
+              </div>
+            </div>
+          </td>
+
+          <!-- Contato -->
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-1.5 text-[13px] text-[#0D1B3E]">
+              <i class="bi bi-telephone text-[#5A6A85]"></i> {{ p.phone }}
+            </div>
+          </td>
+
+          <!-- Última Consulta -->
+          <td class="px-6 py-4">
+            <div class="text-[13px] font-semibold" [ngClass]="p.lastConsult.includes('2025') ? 'text-[#D97706]' : 'text-[#0D1B3E]'">
+              {{ p.lastConsult }}
+            </div>
+            <div class="text-[11px] text-[#5A6A85] mt-0.5">{{ p.lastSpec }}</div>
+          </td>
+
+          <!-- Status -->
+          <td class="px-6 py-4">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap"
+                  [ngStyle]="{'background-color': STATUS_CFG[p.status].bg, 'color': STATUS_CFG[p.status].text}">
+              <span class="w-1.5 h-1.5 rounded-full mr-1.5 shrink-0" [ngStyle]="{'background-color': STATUS_CFG[p.status].text}"></span>
+              {{ STATUS_CFG[p.status].label }}
+            </span>
+          </td>
+
+          <!-- Ações -->
+          <td class="px-6 py-4">
+            <div class="flex items-center justify-end gap-2 relative">
+              <button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#1565C0] text-[#1565C0] text-[12px] font-medium hover:bg-[#EBF3FF] transition-colors whitespace-nowrap">
+                <i class="bi bi-file-earmark-text"></i> Abrir Prontuário
+              </button>
+              
+              <!-- Dropdown Trigger -->
+              <button (click)="toggleMenu($event, p.id)" class="w-8 h-8 flex items-center justify-center rounded-lg border border-[#DDE4F0] text-[#5A6A85] hover:bg-[#F0F4FA] hover:border-[#5A6A85]/30 transition-colors">
+                <i class="bi bi-three-dots"></i>
+              </button>
+
+              <!-- Dropdown Menu -->
+              <div *ngIf="openMenuId === p.id" 
+                   class="absolute right-0 top-full mt-1 w-48 bg-white rounded-xl border border-[#DDE4F0] py-1.5 z-30 shadow-[0_8px_24px_rgba(13,27,62,0.12)]">
+                <button *ngFor="let item of menuOptions; let i = index" 
+                        (click)="onMenuOptionClick($event, item)"
+                        class="w-full text-left px-4 py-2 text-[13px] hover:bg-[#F0F4FA] transition-colors"
+                        [ngClass]="i === 4 ? 'text-red-500 mt-1 border-t border-[#F0F4FA]' : 'text-[#0D1B3E]'">
+                  {{ item }}
+                </button>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="flex items-center justify-between px-6 py-4 border-t border-[#DDE4F0] bg-[#FAFBFD]">
+      <span class="text-[13px] text-[#5A6A85]">
+        Exibindo <span class="font-semibold text-[#0D1B3E]">1 a {{ filteredPatients.length }}</span> de <span class="font-semibold text-[#0D1B3E]">{{ totalPatients }}</span> pacientes
+      </span>
+      <div class="flex items-center gap-1">
+        <button (click)="currentPage = currentPage > 1 ? currentPage - 1 : 1" [disabled]="currentPage === 1" class="w-8 h-8 flex items-center justify-center rounded-lg border border-[#DDE4F0] text-[#5A6A85] hover:bg-[#F0F4FA] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"><i class="bi bi-chevron-left text-xs"></i></button>
+        <button *ngFor="let n of pageNums" (click)="currentPage = n" [ngClass]="currentPage === n ? 'bg-[#1565C0] text-white' : 'border border-[#DDE4F0] text-[#5A6A85] hover:bg-[#F0F4FA]'" class="w-8 h-8 flex items-center justify-center rounded-lg text-[13px] font-medium transition-colors">{{ n }}</button>
+        <span class="w-8 h-8 flex items-center justify-center text-[#5A6A85] text-[13px]">…</span>
+        <button (click)="currentPage = totalPages" [ngClass]="currentPage === totalPages ? 'bg-[#1565C0] text-white' : 'border border-[#DDE4F0] text-[#5A6A85] hover:bg-[#F0F4FA]'" class="w-8 h-8 flex items-center justify-center rounded-lg text-[13px] font-medium transition-colors">{{ totalPages }}</button>
+        <button (click)="currentPage = currentPage < totalPages ? currentPage + 1 : totalPages" [disabled]="currentPage === totalPages" class="w-8 h-8 flex items-center justify-center rounded-lg border border-[#DDE4F0] text-[#5A6A85] hover:bg-[#F0F4FA] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"><i class="bi bi-chevron-right text-xs"></i></button>
+      </div>
+    </div>
+  </div>
+</div>

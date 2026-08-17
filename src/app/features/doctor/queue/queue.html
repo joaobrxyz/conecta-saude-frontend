@@ -1,0 +1,282 @@
+<div class="px-4 sm:px-6 py-6 space-y-5 max-w-[1400px] mx-auto">
+  
+  <!-- Page header -->
+  <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-[22px] font-bold text-[#0D1B3E] tracking-tight leading-tight">Fila de Espera</h1>
+      <p class="text-[13px] text-[#5A6A85] mt-1">Acompanhe o status dos pacientes na clínica em tempo real</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <!-- Live clock -->
+      <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-[#DDE4F0]" style="box-shadow: 0 1px 4px rgba(13,27,62,0.05)">
+        <span class="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse shrink-0"></span>
+        <span class="text-[13px] font-semibold text-[#0D1B3E] font-mono">{{ clock }}</span>
+        <span class="text-[11px] text-[#5A6A85]">ao vivo</span>
+      </div>
+      <button (click)="handleRefresh()" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-[#DDE4F0] bg-white text-[13px] text-[#5A6A85] font-medium hover:border-[#1565C0]/30 hover:text-[#1565C0] transition-colors" style="box-shadow: 0 1px 4px rgba(13,27,62,0.05)">
+        <i class="bi bi-arrow-clockwise" [ngClass]="{'animate-spin': refreshAnim}"></i> Atualizar
+      </button>
+    </div>
+  </div>
+
+  <!-- Stat cards -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="bg-white rounded-xl border border-[#DDE4F0] px-5 py-4 flex items-center gap-4" style="box-shadow: 0 1px 4px rgba(13,27,62,0.05)">
+      <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style="background-color: #1565C018">
+        <i class="bi bi-people text-[#1565C0] text-[20px]"></i>
+      </div>
+      <div>
+        <div class="text-[12px] text-[#5A6A85] font-medium leading-tight">Aguardando</div>
+        <div class="text-[24px] font-extrabold text-[#0D1B3E] leading-tight">{{ waitingCount }}</div>
+      </div>
+    </div>
+    
+    <div class="bg-white rounded-xl border border-[#DDE4F0] px-5 py-4 flex items-center gap-4" style="box-shadow: 0 1px 4px rgba(13,27,62,0.05)">
+      <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style="background-color: #16A34A18">
+        <i class="bi bi-person-check text-[#16A34A] text-[20px]"></i>
+      </div>
+      <div>
+        <div class="text-[12px] text-[#5A6A85] font-medium leading-tight">Em Atendimento</div>
+        <div class="text-[24px] font-extrabold text-[#0D1B3E] leading-tight">{{ consultEnded ? 0 : 1 }}</div>
+        <div *ngIf="!consultEnded" class="text-[11px] font-medium mt-0.5 text-[#16A34A]">Sala 1</div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-[#DDE4F0] px-5 py-4 flex items-center gap-4" style="box-shadow: 0 1px 4px rgba(13,27,62,0.05)">
+      <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style="background-color: #D9770618">
+        <i class="bi bi-exclamation-circle text-[#D97706] text-[20px]"></i>
+      </div>
+      <div>
+        <div class="text-[12px] text-[#5A6A85] font-medium leading-tight">Em Atraso</div>
+        <div class="text-[24px] font-extrabold text-[#0D1B3E] leading-tight">{{ lateCount }}</div>
+        <div *ngIf="lateCount > 0" class="text-[11px] font-medium mt-0.5 text-[#D97706]">{{ lateCount }} paciente{{ lateCount > 1 ? 's' : '' }}</div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-[#DDE4F0] px-5 py-4 flex items-center gap-4" style="box-shadow: 0 1px 4px rgba(13,27,62,0.05)">
+      <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style="background-color: #5A6A8518">
+        <i class="bi bi-clock text-[#5A6A85] text-[20px]"></i>
+      </div>
+      <div>
+        <div class="text-[12px] text-[#5A6A85] font-medium leading-tight">Tempo Médio</div>
+        <div class="text-[24px] font-extrabold text-[#0D1B3E] leading-tight">14 min</div>
+        <div class="text-[11px] font-medium mt-0.5 text-[#5A6A85]">espera hoje</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main split -->
+  <div class="grid lg:grid-cols-3 gap-5">
+    
+    <!-- Left — active consultation -->
+    <div class="lg:col-span-1 space-y-4 self-start">
+      <div *ngIf="!consultEnded" class="bg-white rounded-xl border border-[#DDE4F0] overflow-hidden" style="border-top-width: 3px; border-top-color: #1565C0; box-shadow: 0 2px 10px rgba(21,101,192,0.08)">
+        <div class="px-5 py-4 border-b border-[#F0F4FA]">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse"></span>
+            <span class="text-[13px] font-semibold text-[#0D1B3E]">Em Atendimento Agora</span>
+          </div>
+        </div>
+        
+        <div class="px-5 py-5">
+          <!-- Patient -->
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-white text-[15px] font-bold shrink-0" [ngStyle]="{'background': AVATAR_GRADIENTS[3]}">JP</div>
+            <div>
+              <div class="text-[15px] font-bold text-[#0D1B3E]">Jorge Pereira</div>
+              <div class="text-[12px] text-[#5A6A85]">70 anos · Prontuário #01187</div>
+              <div class="text-[12px] text-[#5A6A85] mt-0.5">Acompanhamento cardíaco</div>
+            </div>
+          </div>
+
+          <!-- Timer -->
+          <div class="flex items-center justify-between px-4 py-3.5 rounded-xl bg-[#F0FDF4] border border-[#BBF7D0] mb-5">
+            <div class="flex items-center gap-2">
+              <i class="bi bi-stopwatch text-[#16A34A]"></i>
+              <span class="text-[12px] text-[#15803D] font-medium">Tempo de consulta</span>
+            </div>
+            <span class="text-[18px] font-extrabold text-[#15803D] font-mono tracking-wide">{{ consultTimer }}</span>
+          </div>
+
+          <!-- Sala info -->
+          <div class="grid grid-cols-2 gap-2 mb-5">
+            <div class="bg-[#F0F4FA] rounded-xl px-3 py-2.5">
+              <div class="text-[10px] text-[#5A6A85] font-medium mb-0.5">Sala</div>
+              <div class="text-[13px] font-semibold text-[#0D1B3E]">Consultório 1</div>
+            </div>
+            <div class="bg-[#F0F4FA] rounded-xl px-3 py-2.5">
+              <div class="text-[10px] text-[#5A6A85] font-medium mb-0.5">Agendado</div>
+              <div class="text-[13px] font-semibold text-[#0D1B3E]">10:00</div>
+            </div>
+          </div>
+
+          <!-- Observations toggle -->
+          <button (click)="expandObs = !expandObs" class="w-full flex items-center justify-between px-4 py-2.5 rounded-xl border border-[#DDE4F0] text-[13px] text-[#5A6A85] font-medium hover:bg-[#F0F4FA] transition-colors mb-3">
+            <div class="flex items-center gap-2">
+              <i class="bi bi-mic"></i> Adicionar Observação
+            </div>
+            <i class="bi bi-chevron-down transition-transform" [ngClass]="{'rotate-180': expandObs}"></i>
+          </button>
+          
+          <textarea *ngIf="expandObs" rows="3" placeholder="Registre observações clínicas..." class="w-full px-3 py-2.5 text-[13px] border border-[#DDE4F0] rounded-xl text-[#0D1B3E] bg-white placeholder:text-[#5A6A85] focus:outline-none focus:border-[#1565C0]/40 focus:ring-2 focus:ring-[#1565C0]/10 transition resize-none mb-3"></textarea>
+
+          <button class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-[#DDE4F0] text-[#5A6A85] text-[13px] font-medium hover:bg-[#F0F4FA] transition-colors mb-2">
+            <i class="bi bi-pause-fill"></i> Pausar Atendimento
+          </button>
+
+          <button (click)="consultEnded = true" class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-white text-[13px] font-semibold transition-all hover:opacity-90 bg-[#1565C0]" style="box-shadow: 0 2px 8px rgba(21,101,192,0.25)">
+            <i class="bi bi-check-circle-fill"></i> Finalizar Consulta
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="consultEnded" class="bg-white rounded-xl border border-[#DDE4F0] px-5 py-8 flex flex-col items-center gap-3 text-center" style="box-shadow: 0 1px 4px rgba(13,27,62,0.05)">
+        <div class="w-12 h-12 rounded-full bg-[#DCFCE7] flex items-center justify-center">
+          <i class="bi bi-check-circle-fill text-[24px] text-[#16A34A]"></i>
+        </div>
+        <div class="text-[14px] font-bold text-[#0D1B3E]">Consulta Finalizada</div>
+        <div class="text-[12px] text-[#5A6A85]">Jorge Pereira · Duração: {{ consultTimer }}</div>
+        <button (click)="consultEnded = false" class="mt-2 px-4 py-2 rounded-xl bg-[#1565C0] text-white text-[12px] font-semibold hover:bg-[#0D47A1] transition-colors">
+          Chamar próximo
+        </button>
+      </div>
+
+      <!-- Queue summary -->
+      <div class="bg-white rounded-xl border border-[#DDE4F0] px-5 py-4" style="box-shadow: 0 1px 4px rgba(13,27,62,0.05)">
+        <div class="text-[11px] font-semibold text-[#5A6A85] uppercase tracking-wider mb-3">Resumo da Fila</div>
+        <div class="space-y-2">
+          <div class="flex items-center justify-between py-1.5 border-b border-[#F0F4FA]">
+            <span class="text-[12px] text-[#5A6A85]">Próximo na fila</span>
+            <span class="text-[12px] font-semibold text-[#0D1B3E]">{{ visibleQueue[0]?.name ?? '—' }}</span>
+          </div>
+          <div class="flex items-center justify-between py-1.5 border-b border-[#F0F4FA]">
+            <span class="text-[12px] text-[#5A6A85]">Total aguardando</span>
+            <span class="text-[12px] font-semibold text-[#1565C0]">{{ visibleQueue.length }} paciente{{ visibleQueue.length !== 1 ? 's' : '' }}</span>
+          </div>
+          <div class="flex items-center justify-between py-1.5 border-b border-[#F0F4FA]">
+            <span class="text-[12px] text-[#5A6A85]">Maior espera</span>
+            <span class="text-[12px] font-semibold text-[#D97706]">28 min</span>
+          </div>
+          <div class="flex items-center justify-between py-1.5">
+            <span class="text-[12px] text-[#5A6A85]">Consultas hoje</span>
+            <span class="text-[12px] font-semibold text-[#5A6A85]">8 / 12</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right — waiting queue -->
+    <div class="lg:col-span-2">
+      <div class="bg-white rounded-xl border border-[#DDE4F0] overflow-hidden" style="box-shadow: 0 1px 4px rgba(13,27,62,0.05)">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between px-6 py-4 border-b border-[#DDE4F0] bg-[#FAFBFD] gap-3">
+          <div class="flex items-center gap-2">
+            <i class="bi bi-people text-[#1565C0]"></i>
+            <span class="text-[13px] font-semibold text-[#0D1B3E]">Pacientes Aguardando</span>
+            <span class="w-5 h-5 rounded-full bg-[#1565C0] text-white text-[10px] font-bold flex items-center justify-center">{{ visibleQueue.length }}</span>
+          </div>
+          <div class="flex items-center gap-1.5 text-[11px] text-[#5A6A85]">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#16A34A] animate-pulse"></span>
+            Atualizado agora
+          </div>
+        </div>
+
+        <div class="divide-y divide-[#F0F4FA]">
+          <div *ngIf="visibleQueue.length === 0" class="flex flex-col items-center justify-center py-16 gap-3">
+            <i class="bi bi-check-circle-fill text-[36px] text-[#DDE4F0]"></i>
+            <div class="text-[13px] text-[#5A6A85]">Nenhum paciente na fila</div>
+          </div>
+
+          <div *ngFor="let p of visibleQueue; let idx = index" 
+            class="px-6 py-5 transition-all"
+            [ngClass]="p.status === 'atrasado' ? 'bg-[#FFF8F5]' : idx === 0 ? 'bg-[#FAFEFF]' : 'hover:bg-[#FAFBFD]'">
+            <div class="flex items-start gap-4">
+              
+              <!-- Position indicator -->
+              <div class="shrink-0 flex flex-col items-center gap-1 pt-0.5">
+                <div class="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-extrabold"
+                     [ngStyle]="(idx === 0 && p.status !== 'atrasado') ? {'background-color': '#1565C0', 'color': 'white'} : p.status === 'atrasado' ? {'background-color': '#FEE2E2', 'color': '#DC2626'} : {'background-color': '#F0F4FA', 'color': '#5A6A85'}">
+                  {{ p.status === 'atrasado' ? '!' : idx + 1 }}
+                </div>
+              </div>
+
+              <!-- Avatar -->
+              <div class="w-10 h-10 rounded-full flex items-center justify-center text-white text-[13px] font-bold shrink-0" [ngStyle]="{'background': AVATAR_GRADIENTS[p.gradIdx]}">
+                {{ p.initials }}
+              </div>
+
+              <!-- Info -->
+              <div class="flex-1 min-w-0">
+                <div class="flex items-start justify-between gap-3 flex-wrap">
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <span class="text-[14px] font-bold text-[#0D1B3E]">{{ p.name }}</span>
+                      <span *ngIf="idx === 0 && p.status !== 'atrasado' && calledId !== p.id" class="px-2 py-0.5 rounded-full bg-[#1565C0] text-white text-[10px] font-semibold">Próximo</span>
+                      <span *ngIf="calledId === p.id" class="px-2 py-0.5 rounded-full bg-[#F3E8FF] text-[#7C3AED] text-[10px] font-semibold">Chamado ✓</span>
+                    </div>
+                    <div class="text-[12px] text-[#5A6A85] mt-0.5">{{ p.age }} anos · {{ p.reason }}</div>
+                  </div>
+                  <span class="shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold" [ngStyle]="{'background-color': STATUS_CFG[p.status].bg, 'color': STATUS_CFG[p.status].text}">
+                    {{ p.status === 'atrasado' ? 'Atrasado ' + p.lateMinutes + ' min' : STATUS_CFG[p.status].label }}
+                  </span>
+                </div>
+
+                <!-- Time row -->
+                <div class="flex items-center gap-4 mt-2.5 flex-wrap">
+                  <div *ngIf="p.arrivedAt" class="flex items-center gap-1.5 text-[12px] text-[#5A6A85]">
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#16A34A]"></span> Chegou às {{ p.arrivedAt }}
+                    <span *ngIf="p.waitMinutes" class="font-semibold ml-1" [ngClass]="p.waitMinutes >= 20 ? 'text-[#D97706]' : 'text-[#5A6A85]'">
+                      · esperando {{ p.waitMinutes }} min
+                    </span>
+                  </div>
+                  <div *ngIf="!p.arrivedAt" class="flex items-center gap-1.5 text-[12px] text-red-500">
+                    <i class="bi bi-exclamation-circle"></i> Não chegou
+                  </div>
+                  <div class="flex items-center gap-1.5 text-[12px] text-[#5A6A85]">
+                    <i class="bi bi-clock"></i> Agendado {{ p.scheduledTime }}
+                  </div>
+                  <div class="text-[11px] text-[#5A6A85]">Prontuário {{ p.prontuario }}</div>
+                </div>
+
+                <!-- Action buttons -->
+                <div class="flex items-center gap-2 mt-3.5 flex-wrap">
+                
+                <!-- Botão Chamar -->
+                <button *ngIf="p.status !== 'atrasado'" 
+                        (click)="callNext(p.id)" 
+                        [disabled]="calledId === p.id"
+                        class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-[12px] font-semibold transition-colors"
+                        [ngClass]="calledId === p.id ? 'bg-[#F3E8FF] text-[#7C3AED] cursor-default' : (idx === 0 ? 'bg-[#1565C0] text-white hover:bg-[#0D47A1]' : 'border border-[#DDE4F0] text-[#5A6A85] hover:border-[#1565C0]/30 hover:text-[#1565C0]')">
+                    <i *ngIf="calledId === p.id" class="bi bi-check-circle-fill"></i>
+                    <i *ngIf="calledId !== p.id" class="bi bi-play-fill" [ngClass]="idx === 0 ? 'text-white' : ''"></i>
+                    {{ calledId === p.id ? 'Chamado' : (idx === 0 ? 'Chamar no Painel' : 'Chamar') }}
+                </button>
+                
+                <button class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-[#DDE4F0] text-[#5A6A85] text-[12px] font-medium hover:border-[#1565C0]/30 hover:text-[#1565C0] transition-colors">
+                    <i class="bi bi-file-earmark-text"></i> Ver Prontuário
+                </button>
+                
+                <button class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-[#DDE4F0] text-[#5A6A85] text-[12px] font-medium hover:border-[#1565C0]/30 transition-colors">
+                    <i class="bi bi-chat-left-text"></i> Observação
+                </button>
+                
+                <!-- Botão Falta -->
+                <button *ngIf="p.status === 'atrasado'" 
+                        (click)="markAbsent(p.id)" 
+                        class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-red-200 text-red-500 text-[12px] font-medium hover:bg-red-50 transition-colors ml-auto">
+                    <i class="bi bi-telephone-x"></i> Marcar como Falta
+                </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="px-6 py-3 border-t border-[#DDE4F0] bg-[#FAFBFD] flex items-center justify-between">
+          <span class="text-[12px] text-[#5A6A85]">{{ visibleQueue.length }} paciente{{ visibleQueue.length !== 1 ? 's' : '' }} na fila</span>
+          <button class="text-[12px] text-[#1565C0] font-medium hover:underline">Ver histórico do dia</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

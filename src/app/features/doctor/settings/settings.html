@@ -1,0 +1,472 @@
+<div class="px-4 sm:px-6 lg:px-8 py-6 max-w-[1200px] mx-auto space-y-6">
+
+  <!-- ── Page header ── -->
+  <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+    <div>
+      <h1 class="text-[1.75rem] font-bold text-[#0D1B3E] tracking-tight leading-tight">Configurações</h1>
+      <p class="text-[13.5px] text-[#5A6A85] mt-1">Gerencie seu perfil profissional, horários de atendimento e preferências</p>
+    </div>
+
+    <!-- Save toast -->
+    <div [ngClass]="saved ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1 pointer-events-none'"
+         class="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#F0FDF4] border border-[rgba(22,163,74,0.25)] text-[13px] font-semibold text-[#16A34A] shadow-sm transition-all duration-300">
+      <i class="bi bi-check-lg"></i> Alterações salvas com sucesso!
+    </div>
+  </div>
+
+  <!-- ── Two-column layout ── -->
+  <div class="flex flex-col lg:flex-row gap-6 items-start">
+
+    <!-- ── Left: Settings navigation ── -->
+    <div class="w-full lg:w-[250px] shrink-0">
+      <div class="bg-white rounded-xl border border-[rgba(21,101,192,0.1)] shadow-sm overflow-hidden">
+        <div class="px-4 py-3.5 border-b border-[#F3F6FB]">
+          <p class="text-[10.5px] font-bold text-[#9AAAC0] uppercase tracking-widest">Seções</p>
+        </div>
+        <nav class="p-2 space-y-0.5">
+          <button *ngFor="let item of SETTINGS_NAV"
+                  (click)="activeSection = item.id"
+                  [ngClass]="activeSection === item.id ? 'bg-[#EBF3FF] border border-[rgba(21,101,192,0.12)]' : 'hover:bg-[#F5F8FF] border border-transparent'"
+                  class="w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-150 text-left group">
+            <div [ngClass]="activeSection === item.id ? 'bg-[#1565C0]' : 'bg-[#F0F4FA] group-hover:bg-[#E8EDF4]'"
+                 class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors">
+              <i [class]="item.icon" [ngClass]="activeSection === item.id ? 'text-white' : 'text-[#9AAAC0]'"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p [ngClass]="activeSection === item.id ? 'text-[#1565C0]' : 'text-[#0D1B3E]'" class="text-[13px] font-semibold leading-tight">
+                {{ item.label }}
+              </p>
+              <p class="text-[10.5px] text-[#9AAAC0] mt-0.5 truncate">{{ item.desc }}</p>
+            </div>
+            <i *ngIf="activeSection === item.id" class="bi bi-chevron-right text-[#1565C0] shrink-0 text-xs"></i>
+          </button>
+        </nav>
+      </div>
+    </div>
+
+    <!-- ── Right: Section content ── -->
+    <div class="flex-1 min-w-0" [ngSwitch]="activeSection">
+      
+      <!-- ============================================== -->
+      <!-- ABA: PERFIL PROFISSIONAL                       -->
+      <!-- ============================================== -->
+      <div *ngSwitchCase="'perfil'" class="space-y-5">
+        
+        <!-- Card 1 -->
+        <div class="bg-white rounded-xl border border-[rgba(21,101,192,0.1)] shadow-sm overflow-hidden">
+          <div class="flex items-center gap-3 px-6 py-4 border-b border-[#F3F6FB]">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-[#1565C012] text-[#1565C0]">
+              <i class="bi bi-person-circle text-base"></i>
+            </div>
+            <div>
+              <h3 class="text-[14px] font-bold text-[#0D1B3E]">Foto e Dados Básicos</h3>
+              <p class="text-[11.5px] text-[#8A9AB8] mt-0.5">Informações exibidas no perfil público do médico</p>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex flex-col sm:flex-row gap-8">
+              <!-- Avatar -->
+              <div class="flex flex-col items-center gap-3 shrink-0">
+                <div class="relative group">
+                  <div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-[#1565C0] to-[#42A5F5] flex items-center justify-center text-white text-3xl font-bold shadow-lg">R</div>
+                  <button class="absolute inset-0 w-24 h-24 rounded-2xl bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <i class="bi bi-camera text-white text-xl"></i>
+                  </button>
+                </div>
+                <button class="flex items-center gap-1.5 text-[12px] font-semibold text-[#1565C0] hover:underline underline-offset-2 transition-colors">
+                  <i class="bi bi-upload"></i> Alterar foto
+                </button>
+                <p class="text-[10px] text-[#B8C7DC] text-center leading-tight max-w-[100px]">JPG ou PNG, máx. 2 MB</p>
+              </div>
+              <!-- Fields -->
+              <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="sm:col-span-2">
+                  <label class="block text-[12px] font-semibold text-[#5A6A85] mb-1.5 uppercase tracking-wide">Nome Completo <span class="text-[#DC2626] ml-0.5">*</span></label>
+                  <div class="relative">
+                    <i class="bi bi-person absolute left-3.5 top-1/2 -translate-y-1/2 text-[#B8C7DC]"></i>
+                    <input type="text" [(ngModel)]="nome" class="w-full pl-9 pr-4 py-2.5 text-[13px] rounded-lg border border-[#DDE4F0] text-[#0D1B3E] outline-none focus:border-[#1565C0] focus:ring-2 focus:ring-[#1565C0]/10 transition-all bg-white">
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-[12px] font-semibold text-[#5A6A85] mb-1.5 uppercase tracking-wide">Especialidade <span class="text-[#DC2626] ml-0.5">*</span></label>
+                  <div class="relative">
+                    <i class="bi bi-heart-pulse absolute left-3.5 top-1/2 -translate-y-1/2 text-[#B8C7DC]"></i>
+                    <input type="text" [(ngModel)]="especialidade" class="w-full pl-9 pr-4 py-2.5 text-[13px] rounded-lg border border-[#DDE4F0] text-[#0D1B3E] outline-none focus:border-[#1565C0] focus:ring-2 focus:ring-[#1565C0]/10 transition-all bg-white">
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-[12px] font-semibold text-[#5A6A85] mb-1.5 uppercase tracking-wide">CRM</label>
+                  <div class="relative">
+                    <i class="bi bi-patch-check absolute left-3.5 top-1/2 -translate-y-1/2 text-[#B8C7DC]"></i>
+                    <input type="text" [(ngModel)]="crm" readonly class="w-full pl-9 pr-4 py-2.5 text-[13px] rounded-lg border border-[#DDE4F0] text-[#8A9AB8] bg-[#F5F8FF] cursor-default">
+                  </div>
+                  <p class="text-[10.5px] text-[#8A9AB8] mt-1 flex items-center gap-1"><i class="bi bi-info-circle text-[#9AAAC0]"></i> Número verificado pelo CFM</p>
+                </div>
+                <div>
+                  <label class="block text-[12px] font-semibold text-[#5A6A85] mb-1.5 uppercase tracking-wide">E-mail Profissional <span class="text-[#DC2626] ml-0.5">*</span></label>
+                  <div class="relative">
+                    <i class="bi bi-envelope absolute left-3.5 top-1/2 -translate-y-1/2 text-[#B8C7DC]"></i>
+                    <input type="email" [(ngModel)]="email" class="w-full pl-9 pr-4 py-2.5 text-[13px] rounded-lg border border-[#DDE4F0] text-[#0D1B3E] outline-none focus:border-[#1565C0] focus:ring-2 focus:ring-[#1565C0]/10 transition-all bg-white">
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-[12px] font-semibold text-[#5A6A85] mb-1.5 uppercase tracking-wide">Telefone</label>
+                  <div class="relative">
+                    <i class="bi bi-telephone absolute left-3.5 top-1/2 -translate-y-1/2 text-[#B8C7DC]"></i>
+                    <input type="text" [(ngModel)]="telefone" class="w-full pl-9 pr-4 py-2.5 text-[13px] rounded-lg border border-[#DDE4F0] text-[#0D1B3E] outline-none focus:border-[#1565C0] focus:ring-2 focus:ring-[#1565C0]/10 transition-all bg-white">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Bio -->
+        <div class="bg-white rounded-xl border border-[rgba(21,101,192,0.1)] shadow-sm overflow-hidden">
+          <div class="flex items-center gap-3 px-6 py-4 border-b border-[#F3F6FB]">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-[#7C3AED12] text-[#7C3AED]"><i class="bi bi-pen"></i></div>
+            <div>
+              <h3 class="text-[14px] font-bold text-[#0D1B3E]">Sobre o Profissional</h3>
+              <p class="text-[11.5px] text-[#8A9AB8] mt-0.5">Exibido na tela de agendamento para os pacientes</p>
+            </div>
+          </div>
+          <div class="p-6">
+            <label class="block text-[12px] font-semibold text-[#5A6A85] mb-1.5 uppercase tracking-wide">Biografia Profissional</label>
+            <textarea [(ngModel)]="bio" rows="5" [maxlength]="bioMax" class="w-full px-4 py-3 text-[13px] rounded-lg border border-[#DDE4F0] text-[#0D1B3E] outline-none focus:border-[#1565C0] focus:ring-2 focus:ring-[#1565C0]/10 transition-all resize-none bg-white leading-relaxed" placeholder="Descreva sua formação, experiência..."></textarea>
+            <div class="flex items-center justify-between mt-1.5">
+              <p class="text-[11px] text-[#8A9AB8]">Esta bio é pública e aparece ao paciente antes do agendamento.</p>
+              <span [ngClass]="bio.length > bioMax * 0.9 ? 'text-[#DC2626]' : 'text-[#9AAAC0]'" class="text-[11px] font-semibold tabular-nums">{{ bio.length }}/{{ bioMax }}</span>
+            </div>
+            
+            <label class="block text-[12px] font-semibold text-[#5A6A85] mt-5 mb-1.5 uppercase tracking-wide">Áreas de Atuação</label>
+            <div class="flex flex-wrap gap-2 mt-1">
+              <span *ngFor="let tag of tagsAtuacao" class="flex items-center gap-1.5 text-[12px] font-medium text-[#7C3AED] bg-[#F5F3FF] border border-[rgba(124,58,237,0.2)] px-3 py-1.5 rounded-full">
+                {{ tag }}
+                <i (click)="removeTag(tag)" class="bi bi-x-lg cursor-pointer opacity-60 hover:opacity-100 text-[10px]"></i>
+              </span>
+              <button class="flex items-center gap-1.5 text-[12px] font-medium text-[#5A6A85] border border-dashed border-[#C8D4E4] px-3 py-1.5 rounded-full hover:border-[#1565C0] hover:text-[#1565C0] transition-colors">
+                <i class="bi bi-plus-lg text-[10px]"></i> Adicionar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-1 pb-2">
+          <button class="px-5 py-2.5 rounded-lg border border-[#DDE4F0] text-[13px] font-medium text-[#5A6A85] hover:bg-[#F5F8FF] transition-colors">Descartar alterações</button>
+          <button (click)="handleSave()" class="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-[#1565C0] text-white text-[13.5px] font-semibold hover:bg-[#1248A0] transition-colors shadow-md shadow-blue-200/60">
+            <i class="bi bi-check-lg"></i> Salvar Alterações
+          </button>
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- ABA: AGENDA E HORÁRIOS                         -->
+      <!-- ============================================== -->
+      <div *ngSwitchCase="'agenda'" class="space-y-5">
+        
+        <div class="bg-white rounded-xl border border-[rgba(21,101,192,0.1)] shadow-sm overflow-hidden">
+          <div class="flex items-center gap-3 px-6 py-4 border-b border-[#F3F6FB]">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-[#1565C012] text-[#1565C0]"><i class="bi bi-clock"></i></div>
+            <div><h3 class="text-[14px] font-bold text-[#0D1B3E]">Horários de Atendimento</h3><p class="text-[11.5px] text-[#8A9AB8] mt-0.5">Configure sua disponibilidade semanal</p></div>
+          </div>
+          <div class="p-6 space-y-2">
+            <div class="hidden sm:grid grid-cols-[1fr_80px_120px_120px_80px] gap-3 px-1 mb-1">
+              <p *ngFor="let h of ['Dia da Semana', 'Ativo', 'Início', 'Fim', 'Intervalo']" class="text-[10px] font-semibold text-[#9AAAC0] uppercase tracking-wide text-center first:text-left">{{ h }}</p>
+            </div>
+
+            <div *ngFor="let day of DAYS" [ngClass]="hours[day.id].active ? 'border-[rgba(21,101,192,0.15)] bg-white' : 'border-[#F0F4FA] bg-[#F8FAFD]'" class="flex flex-col sm:grid sm:grid-cols-[1fr_80px_120px_120px_80px] gap-2 sm:gap-3 items-start sm:items-center p-3 rounded-xl border transition-all">
+              <div class="flex items-center justify-between w-full sm:w-auto">
+                <span [ngClass]="hours[day.id].active ? 'text-[#0D1B3E]' : 'text-[#B8C7DC]'" class="text-[13px] font-semibold">{{ day.label }}</span>
+                <!-- Mobile toggle -->
+                <div class="sm:hidden">
+                  <button (click)="toggleDay(day.id)" [ngClass]="hours[day.id].active ? 'bg-[#1565C0]' : 'bg-[#D0DCF0]'" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors shrink-0">
+                    <span [ngClass]="hours[day.id].active ? 'translate-x-6' : 'translate-x-1'" class="inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform"></span>
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Desktop toggle -->
+              <div class="hidden sm:flex justify-center">
+                <button (click)="toggleDay(day.id)" [ngClass]="hours[day.id].active ? 'bg-[#1565C0]' : 'bg-[#D0DCF0]'" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors shrink-0">
+                  <span [ngClass]="hours[day.id].active ? 'translate-x-6' : 'translate-x-1'" class="inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform"></span>
+                </button>
+              </div>
+
+              <input type="time" [(ngModel)]="hours[day.id].start" [disabled]="!hours[day.id].active" [ngClass]="hours[day.id].active ? 'border-[#DDE4F0] text-[#0D1B3E] focus:border-[#1565C0]' : 'border-transparent bg-transparent text-[#C8D4E4] cursor-not-allowed'" class="w-full px-3 py-2 text-[12.5px] rounded-lg border outline-none transition-all">
+              <input type="time" [(ngModel)]="hours[day.id].end" [disabled]="!hours[day.id].active" [ngClass]="hours[day.id].active ? 'border-[#DDE4F0] text-[#0D1B3E] focus:border-[#1565C0]' : 'border-transparent bg-transparent text-[#C8D4E4] cursor-not-allowed'" class="w-full px-3 py-2 text-[12.5px] rounded-lg border outline-none transition-all">
+              
+              <div class="flex justify-center">
+                <button (click)="hours[day.id].break = !hours[day.id].break" [disabled]="!hours[day.id].active" [ngClass]="hours[day.id].break && hours[day.id].active ? 'bg-[#1565C0]' : 'bg-[#D0DCF0]'" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors shrink-0">
+                  <span [ngClass]="hours[day.id].break && hours[day.id].active ? 'translate-x-6' : 'translate-x-1'" class="inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-[rgba(21,101,192,0.1)] shadow-sm overflow-hidden">
+          <div class="flex items-center gap-3 px-6 py-4 border-b border-[#F3F6FB]">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-[#16A34A12] text-[#16A34A]"><i class="bi bi-clock"></i></div>
+            <div><h3 class="text-[14px] font-bold text-[#0D1B3E]">Duração e Intervalo</h3><p class="text-[11.5px] text-[#8A9AB8] mt-0.5">Configurações padrão de tempo por consulta</p></div>
+          </div>
+          <div class="p-6 grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-[12px] font-semibold text-[#5A6A85] mb-1.5 uppercase tracking-wide">Duração da Consulta</label>
+              <div class="relative">
+                <select [(ngModel)]="duration" class="w-full px-4 py-2.5 text-[13px] rounded-lg border border-[#DDE4F0] text-[#0D1B3E] bg-white outline-none focus:border-[#1565C0] focus:ring-2 focus:ring-[#1565C0]/10 appearance-none">
+                  <option *ngFor="let m of ['15', '20', '30', '45', '60']" [value]="m">{{ m }} minutos</option>
+                </select>
+                <i class="bi bi-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[#B8C7DC] pointer-events-none"></i>
+              </div>
+            </div>
+            <div>
+              <label class="block text-[12px] font-semibold text-[#5A6A85] mb-1.5 uppercase tracking-wide">Intervalo entre Consultas</label>
+              <div class="relative">
+                <select [(ngModel)]="buffer" class="w-full px-4 py-2.5 text-[13px] rounded-lg border border-[#DDE4F0] text-[#0D1B3E] bg-white outline-none focus:border-[#1565C0] focus:ring-2 focus:ring-[#1565C0]/10 appearance-none">
+                  <option *ngFor="let m of ['0', '5', '10', '15', '20']" [value]="m">{{ m === '0' ? 'Sem intervalo' : m + ' minutos' }}</option>
+                </select>
+                <i class="bi bi-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[#B8C7DC] pointer-events-none"></i>
+              </div>
+            </div>
+            <div class="sm:col-span-2 p-3.5 rounded-xl bg-[#F0FDF4] border border-[rgba(22,163,74,0.15)] flex items-start gap-2.5">
+              <i class="bi bi-info-circle text-[#16A34A] shrink-0 mt-0.5"></i>
+              <p class="text-[12px] text-[#16A34A] leading-snug">Com as configurações atuais, você tem capacidade para <strong>{{ currentCapacity }} consultas</strong> por turno de 8 horas.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-1 pb-2">
+          <button class="px-5 py-2.5 rounded-lg border border-[#DDE4F0] text-[13px] font-medium text-[#5A6A85] hover:bg-[#F5F8FF] transition-colors">Restaurar padrão</button>
+          <button (click)="handleSave()" class="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-[#1565C0] text-white text-[13.5px] font-semibold hover:bg-[#1248A0] transition-colors shadow-md shadow-blue-200/60">
+            <i class="bi bi-check-lg"></i> Salvar Horários
+          </button>
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- ABA: ASSINATURA DIGITAL                        -->
+      <!-- ============================================== -->
+      <div *ngSwitchCase="'assinatura'" class="space-y-5">
+        <div class="bg-white rounded-xl border border-[rgba(21,101,192,0.1)] shadow-sm overflow-hidden">
+          
+        </div>
+
+        <div class="bg-white rounded-xl border border-[rgba(21,101,192,0.1)] shadow-sm overflow-hidden">
+          <div class="flex items-center gap-3 px-6 py-4 border-b border-[#F3F6FB]">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-[#0891B212] text-[#0891B2]"><i class="bi bi-pen"></i></div>
+            <div><h3 class="text-[14px] font-bold text-[#0D1B3E]">Rubrica Manuscrita</h3><p class="text-[11.5px] text-[#8A9AB8] mt-0.5">Imagem da assinatura para documentos impressos</p></div>
+          </div>
+          <div class="p-6 flex flex-col sm:flex-row gap-6 items-start">
+            <div class="w-full sm:w-56 h-28 rounded-xl border-2 border-dashed border-[#C8D4E4] flex items-center justify-center bg-[#FAFCFF] cursor-pointer hover:border-[#1565C0] hover:bg-[#F5F8FF] transition-all group shrink-0">
+              <div class="text-center">
+                <i class="bi bi-camera text-xl block mx-auto text-[#B8C7DC] group-hover:text-[#1565C0] transition-colors mb-2"></i>
+                <p class="text-[11.5px] text-[#8A9AB8] group-hover:text-[#1565C0]">Carregar imagem</p>
+              </div>
+            </div>
+            <div class="flex-1 space-y-3">
+              <p class="text-[13px] text-[#5A6A85] leading-relaxed">Carregue uma imagem da sua assinatura manuscrita em fundo branco (PNG transparente recomendado). Esta imagem será usada em documentos impressos e laudos em PDF.</p>
+              <div class="flex flex-wrap gap-2 text-[11.5px] text-[#8A9AB8]">
+                <span *ngFor="let req of ['PNG transparente', 'Mín. 300 DPI', 'Fundo branco', 'Máx. 1 MB']" class="flex items-center gap-1 bg-[#F0F4FA] px-2.5 py-1 rounded-full">
+                  <i class="bi bi-check text-[#16A34A]"></i> {{ req }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="flex justify-end gap-3 pt-1 pb-2">
+          <button (click)="handleSave()" class="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-[#1565C0] text-white text-[13.5px] font-semibold hover:bg-[#1248A0] transition-colors shadow-md shadow-blue-200/60">
+            <i class="bi bi-check-lg"></i> Salvar Configurações
+          </button>
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- ABA: NOTIFICAÇÕES                              -->
+      <!-- ============================================== -->
+      <div *ngSwitchCase="'notificacoes'" class="space-y-5">
+        <div class="bg-white rounded-xl border border-[rgba(21,101,192,0.1)] shadow-sm overflow-hidden">
+          <div class="flex items-center gap-3 px-6 py-4 border-b border-[#F3F6FB]">
+            <div class="w-8 h-8 rounded-lg bg-[#EBF3FF] flex items-center justify-center text-[#1565C0]"><i class="bi bi-bell"></i></div>
+            <div class="flex-1">
+              <h3 class="text-[14px] font-bold text-[#0D1B3E]">Preferências de Notificação</h3>
+              <p class="text-[11.5px] text-[#8A9AB8] mt-0.5">Configure como deseja ser alertado para cada evento</p>
+            </div>
+            <div class="hidden sm:flex items-center gap-5 shrink-0 pr-1">
+              <span *ngFor="let ch of ['E-mail', 'Push', 'SMS']" class="text-[10px] font-semibold text-[#9AAAC0] uppercase tracking-wide w-11 text-center">{{ ch }}</span>
+            </div>
+          </div>
+          
+          <div class="px-6 py-2">
+            <div *ngFor="let group of NOTIF_GROUPS" class="mb-4 last:mb-0">
+              <p class="text-[10.5px] font-bold text-[#9AAAC0] uppercase tracking-widest pt-3 pb-1">{{ group.title }}</p>
+              
+              <div *ngFor="let item of group.items" class="flex flex-col sm:flex-row sm:items-center gap-3 py-3.5 border-b border-[#F3F6FB] last:border-0">
+                <div class="flex-1 min-w-0">
+                  <p class="text-[13px] font-semibold text-[#0D1B3E]">{{ item.label }}</p>
+                  <p class="text-[11.5px] text-[#8A9AB8] mt-0.5">{{ item.desc }}</p>
+                </div>
+                <div class="flex items-center gap-5 shrink-0">
+                  <!-- E-mail -->
+                  <div class="flex flex-col items-center gap-1">
+                    <button (click)="toggleNotif(item.id, 'email')" [ngClass]="notifs[item.id].email ? 'bg-[#1565C0]' : 'bg-[#D0DCF0]'" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors shrink-0">
+                      <span [ngClass]="notifs[item.id].email ? 'translate-x-6' : 'translate-x-1'" class="inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform"></span>
+                    </button>
+                    <span class="text-[9px] text-[#B8C7DC] uppercase tracking-wide font-semibold">E-mail</span>
+                  </div>
+                  <!-- Push -->
+                  <div class="flex flex-col items-center gap-1">
+                    <button (click)="toggleNotif(item.id, 'push')" [ngClass]="notifs[item.id].push ? 'bg-[#1565C0]' : 'bg-[#D0DCF0]'" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors shrink-0">
+                      <span [ngClass]="notifs[item.id].push ? 'translate-x-6' : 'translate-x-1'" class="inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform"></span>
+                    </button>
+                    <span class="text-[9px] text-[#B8C7DC] uppercase tracking-wide font-semibold">Push</span>
+                  </div>
+                  <!-- SMS -->
+                  <div class="flex flex-col items-center gap-1">
+                    <button (click)="toggleNotif(item.id, 'sms')" [ngClass]="notifs[item.id].sms ? 'bg-[#1565C0]' : 'bg-[#D0DCF0]'" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors shrink-0">
+                      <span [ngClass]="notifs[item.id].sms ? 'translate-x-6' : 'translate-x-1'" class="inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform"></span>
+                    </button>
+                    <span class="text-[9px] text-[#B8C7DC] uppercase tracking-wide font-semibold">SMS</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-1 pb-2">
+          <button (click)="handleSave()" class="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-[#1565C0] text-white text-[13.5px] font-semibold hover:bg-[#1248A0] transition-colors shadow-md shadow-blue-200/60">
+            <i class="bi bi-check-lg"></i> Salvar Preferências
+          </button>
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- ABA: SEGURANÇA E SENHA                         -->
+      <!-- ============================================== -->
+      <div *ngSwitchCase="'seguranca'" class="space-y-5">
+        <div class="bg-white rounded-xl border border-[rgba(21,101,192,0.1)] shadow-sm overflow-hidden">
+          <div class="flex items-center gap-3 px-6 py-4 border-b border-[#F3F6FB]">
+            <div class="w-8 h-8 rounded-lg bg-[#1565C012] flex items-center justify-center text-[#1565C0]"><i class="bi bi-lock"></i></div>
+            <div><h3 class="text-[14px] font-bold text-[#0D1B3E]">Alterar Senha</h3><p class="text-[11.5px] text-[#8A9AB8] mt-0.5">Use uma senha forte com no mínimo 8 caracteres</p></div>
+          </div>
+          <div class="p-6 space-y-4 max-w-md">
+            <div>
+              <label class="block text-[12px] font-semibold text-[#5A6A85] mb-1.5 uppercase tracking-wide">Senha Atual</label>
+              <div class="relative">
+                <i class="bi bi-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-[#B8C7DC]"></i>
+                <input [type]="showCurrent ? 'text' : 'password'" [(ngModel)]="currentPw" placeholder="Digite sua senha atual" class="w-full pl-9 pr-10 py-2.5 text-[13px] rounded-lg border border-[#DDE4F0] text-[#0D1B3E] outline-none focus:border-[#1565C0] transition-all bg-white">
+                <button (click)="showCurrent = !showCurrent" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#B8C7DC] hover:text-[#5A6A85]"><i class="bi" [ngClass]="showCurrent ? 'bi-eye-slash' : 'bi-eye'"></i></button>
+              </div>
+            </div>
+            
+            <div>
+              <label class="block text-[12px] font-semibold text-[#5A6A85] mb-1.5 uppercase tracking-wide">Nova Senha</label>
+              <div class="relative">
+                <i class="bi bi-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-[#B8C7DC]"></i>
+                <input [type]="showNew ? 'text' : 'password'" [(ngModel)]="newPw" placeholder="Mínimo 8 caracteres" class="w-full pl-9 pr-10 py-2.5 text-[13px] rounded-lg border border-[#DDE4F0] text-[#0D1B3E] outline-none focus:border-[#1565C0] transition-all bg-white">
+                <button (click)="showNew = !showNew" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#B8C7DC] hover:text-[#5A6A85]"><i class="bi" [ngClass]="showNew ? 'bi-eye-slash' : 'bi-eye'"></i></button>
+              </div>
+              <div *ngIf="newPw" class="flex items-center gap-2 mt-2">
+                <div class="flex gap-1 flex-1">
+                  <div *ngFor="let i of [1,2,3,4]" class="h-1 flex-1 rounded-full transition-all" [ngStyle]="{'background': i <= getPwScore() ? getPwColor() : '#E8EDF4'}"></div>
+                </div>
+                <span class="text-[11px] font-semibold" [ngStyle]="{'color': getPwColor()}">{{ getPwLabel() }}</span>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[12px] font-semibold text-[#5A6A85] mb-1.5 uppercase tracking-wide">Confirmar Nova Senha</label>
+              <div class="relative">
+                <i class="bi bi-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-[#B8C7DC]"></i>
+                <input [type]="showConfirm ? 'text' : 'password'" [(ngModel)]="confirmPw" placeholder="Repita a nova senha" class="w-full pl-9 pr-10 py-2.5 text-[13px] rounded-lg border border-[#DDE4F0] text-[#0D1B3E] outline-none focus:border-[#1565C0] transition-all bg-white">
+                <button (click)="showConfirm = !showConfirm" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#B8C7DC] hover:text-[#5A6A85]"><i class="bi" [ngClass]="showConfirm ? 'bi-eye-slash' : 'bi-eye'"></i></button>
+              </div>
+              <p *ngIf="confirmPw && newPw !== confirmPw" class="text-[11.5px] text-[#DC2626] flex items-center gap-1.5 mt-1.5"><i class="bi bi-exclamation-circle"></i> As senhas não coincidem</p>
+            </div>
+
+            <div class="p-3 rounded-xl bg-[#F5F8FF] border border-[rgba(21,101,192,0.1)] space-y-1 mt-4">
+              <div class="flex items-center gap-2 text-[11.5px]">
+                <div class="w-3.5 h-3.5 rounded-full flex items-center justify-center shrink-0" [ngClass]="newPw.length >= 8 ? 'bg-[#16A34A]' : 'bg-[#E8EDF4]'"><i *ngIf="newPw.length >= 8" class="bi bi-check text-white text-[8px]"></i></div>
+                <span [ngClass]="newPw.length >= 8 ? 'text-[#16A34A]' : 'text-[#8A9AB8]'">Mínimo 8 caracteres</span>
+              </div>
+              <div class="flex items-center gap-2 text-[11.5px]">
+                <div class="w-3.5 h-3.5 rounded-full flex items-center justify-center shrink-0" [ngClass]="hasUppercase() ? 'bg-[#16A34A]' : 'bg-[#E8EDF4]'"><i *ngIf="hasUppercase()" class="bi bi-check text-white text-[8px]"></i></div>
+                <span [ngClass]="hasUppercase() ? 'text-[#16A34A]' : 'text-[#8A9AB8]'">Letra maiúscula (A-Z)</span>
+              </div>
+              <div class="flex items-center gap-2 text-[11.5px]">
+                <div class="w-3.5 h-3.5 rounded-full flex items-center justify-center shrink-0" [ngClass]="hasNumber() ? 'bg-[#16A34A]' : 'bg-[#E8EDF4]'"><i *ngIf="hasNumber()" class="bi bi-check text-white text-[8px]"></i></div>
+                <span [ngClass]="hasNumber() ? 'text-[#16A34A]' : 'text-[#8A9AB8]'">Número (0-9)</span>
+              </div>
+              <div class="flex items-center gap-2 text-[11.5px]">
+                <div class="w-3.5 h-3.5 rounded-full flex items-center justify-center shrink-0" [ngClass]="hasSpecial() ? 'bg-[#16A34A]' : 'bg-[#E8EDF4]'"><i *ngIf="hasSpecial()" class="bi bi-check text-white text-[8px]"></i></div>
+                <span [ngClass]="hasSpecial() ? 'text-[#16A34A]' : 'text-[#8A9AB8]'">Caractere especial (!@#...)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-[rgba(21,101,192,0.1)] shadow-sm overflow-hidden">
+          <div class="flex items-center gap-3 px-6 py-4 border-b border-[#F3F6FB]">
+            <div class="w-8 h-8 rounded-lg bg-[#16A34A12] flex items-center justify-center text-[#16A34A]"><i class="bi bi-shield-check"></i></div>
+            <div><h3 class="text-[14px] font-bold text-[#0D1B3E]">Segurança Avançada</h3><p class="text-[11.5px] text-[#8A9AB8] mt-0.5">Camadas adicionais de proteção para sua conta</p></div>
+          </div>
+          <div class="p-6">
+            <div class="space-y-4">
+              <div class="flex items-center justify-between gap-4 p-4 rounded-xl border border-[#F0F4FA] hover:border-[rgba(21,101,192,0.15)] transition-colors">
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 mb-0.5">
+                    <p class="text-[13px] font-semibold text-[#0D1B3E]">Autenticação em dois fatores (2FA)</p>
+                    <span class="text-[9.5px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-full" [ngStyle]="twoFactor ? {'color': '#16A34A', 'background': '#16A34A15'} : {'color': '#DC2626', 'background': '#DC262615'}">{{ twoFactor ? 'Ativo' : 'Inativo' }}</span>
+                  </div>
+                  <p class="text-[11.5px] text-[#8A9AB8]">Exige código via aplicativo autenticador ao fazer login</p>
+                </div>
+                <button (click)="twoFactor = !twoFactor" [ngClass]="twoFactor ? 'bg-[#1565C0]' : 'bg-[#D0DCF0]'" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors shrink-0">
+                  <span [ngClass]="twoFactor ? 'translate-x-6' : 'translate-x-1'" class="inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform"></span>
+                </button>
+              </div>
+
+              <div class="flex items-center justify-between gap-4 p-4 rounded-xl border border-[#F0F4FA] hover:border-[rgba(21,101,192,0.15)] transition-colors">
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 mb-0.5">
+                    <p class="text-[13px] font-semibold text-[#0D1B3E]">Alertas de sessão suspeita</p>
+                    <span class="text-[9.5px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-full" [ngStyle]="sessionAlert ? {'color': '#16A34A', 'background': '#16A34A15'} : {'color': '#9AAAC0', 'background': '#9AAAC015'}">{{ sessionAlert ? 'Ativo' : 'Inativo' }}</span>
+                  </div>
+                  <p class="text-[11.5px] text-[#8A9AB8]">Notificação ao detectar login de dispositivo não reconhecido</p>
+                </div>
+                <button (click)="sessionAlert = !sessionAlert" [ngClass]="sessionAlert ? 'bg-[#1565C0]' : 'bg-[#D0DCF0]'" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors shrink-0">
+                  <span [ngClass]="sessionAlert ? 'translate-x-6' : 'translate-x-1'" class="inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform"></span>
+                </button>
+              </div>
+            </div>
+
+            <div class="mt-5">
+              <p class="text-[12px] font-bold text-[#5A6A85] uppercase tracking-widest mb-3">Sessões Ativas</p>
+              <div *ngFor="let s of activeSessions" class="flex items-center gap-3 py-3 border-b border-[#F3F6FB] last:border-0">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" [ngClass]="s.current ? 'bg-[#EBF3FF]' : 'bg-[#F3F6FB]'">
+                  <i class="bi bi-shield-check" [ngClass]="s.current ? 'text-[#1565C0]' : 'text-[#9AAAC0]'"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2">
+                    <p class="text-[13px] font-semibold text-[#0D1B3E]">{{ s.device }}</p>
+                    <span *ngIf="s.current" class="text-[9px] font-bold text-[#16A34A] bg-[#F0FDF4] border border-[rgba(22,163,74,0.2)] px-1.5 py-0.5 rounded-full uppercase">Esta sessão</span>
+                  </div>
+                  <p class="text-[11px] text-[#8A9AB8]">{{ s.location }} · {{ s.last }}</p>
+                </div>
+                <button *ngIf="!s.current" class="text-[11.5px] font-semibold text-[#DC2626] hover:text-[#B91C1C] transition-colors">Encerrar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-1 pb-2">
+          <button class="px-5 py-2.5 rounded-lg border border-[#DDE4F0] text-[13px] font-medium text-[#5A6A85] hover:bg-[#F5F8FF] transition-colors">Cancelar</button>
+          <button (click)="handleSave()" [disabled]="!currentPw || !newPw || newPw !== confirmPw" [ngClass]="currentPw && newPw && newPw === confirmPw ? 'bg-[#1565C0] hover:bg-[#1248A0] shadow-md shadow-blue-200/60' : 'bg-[#A0BBE0] cursor-not-allowed'" class="flex items-center gap-2 px-6 py-2.5 rounded-lg text-[13.5px] font-semibold text-white transition-colors">
+            <i class="bi bi-check-lg"></i> Alterar Senha
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

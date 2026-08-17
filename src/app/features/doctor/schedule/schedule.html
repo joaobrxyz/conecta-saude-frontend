@@ -1,0 +1,229 @@
+<div class="flex flex-col h-full bg-[#F0F4FA]">
+  
+  <!-- Page header bar -->
+  <div class="bg-white border-b border-[#DDE4F0] px-6 flex items-center gap-4 shrink-0" style="height: 56px">
+    <h1 class="text-[16px] font-bold text-[#0D1B3E]">Agenda</h1>
+
+    <!-- Date navigator -->
+    <div class="flex-1 flex items-center justify-center gap-2">
+      <button class="w-7 h-7 flex items-center justify-center rounded-lg border border-[#DDE4F0] hover:bg-[#F0F4FA] transition-colors">
+        <i class="bi bi-chevron-left text-[#5A6A85] text-xs"></i>
+      </button>
+      <span class="text-[13px] font-semibold text-[#0D1B3E] min-w-[220px] text-center">{{ dateLabel }}</span>
+      <button class="w-7 h-7 flex items-center justify-center rounded-lg border border-[#DDE4F0] hover:bg-[#F0F4FA] transition-colors">
+        <i class="bi bi-chevron-right text-[#5A6A85] text-xs"></i>
+      </button>
+    </div>
+
+    <!-- View toggles + add -->
+    <div class="flex items-center gap-2">
+      <div class="flex items-center bg-[#F0F4FA] border border-[#DDE4F0] rounded-lg p-0.5 gap-0.5">
+        <button *ngFor="let v of viewOptions" 
+        (click)="activeView = v"
+        [ngClass]="activeView === v ? 'bg-white text-[#1565C0] shadow-sm border border-[#DDE4F0]' : 'text-[#5A6A85] hover:text-[#0D1B3E]'"
+        class="px-3 py-1.5 rounded-md text-[12px] font-medium transition-all">
+        {{ v }}
+        </button>
+      </div>
+      <button class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#1565C0] text-white text-[12px] font-semibold hover:bg-[#0D47A1] transition-colors" style="box-shadow: 0 2px 6px rgba(21,101,192,0.25)">
+        <i class="bi bi-plus-lg text-xs"></i> Nova consulta
+      </button>
+    </div>
+  </div>
+
+  <!-- Content Grid -->
+  <div class="flex-1 p-6">
+    <div class="grid gap-5 h-full" style="grid-template-columns: 240px 1fr">
+      
+      <!-- ── Left column (Controles) ── -->
+      <div class="space-y-4 self-start">
+        
+        <!-- Mini calendar -->
+        <div class="bg-white rounded-xl border border-[#DDE4F0]" style="box-shadow: 0 1px 4px rgba(13,27,62,0.05)">
+          <div class="px-4 pt-4 pb-3">
+            <div class="flex items-center justify-between mb-3">
+              <button class="w-7 h-7 flex items-center justify-center rounded-lg border border-[#DDE4F0] hover:bg-[#F0F4FA] transition-colors">
+                <i class="bi bi-chevron-left text-[#5A6A85] text-xs"></i>
+              </button>
+              <span class="text-[12px] font-semibold text-[#0D1B3E]">{{ MONTH_NAMES[calMonth] }} {{ calYear }}</span>
+              <button class="w-7 h-7 flex items-center justify-center rounded-lg border border-[#DDE4F0] hover:bg-[#F0F4FA] transition-colors">
+                <i class="bi bi-chevron-right text-[#5A6A85] text-xs"></i>
+              </button>
+            </div>
+            
+            <!-- Weekday row -->
+            <div class="grid grid-cols-7 mb-1">
+              <div *ngFor="let d of WEEKDAYS" class="text-center text-[10px] font-semibold text-[#5A6A85] py-0.5">{{ d.charAt(0) }}</div>
+            </div>
+            
+            <!-- Days -->
+            <div class="grid grid-cols-7 gap-y-0.5">
+              <ng-container *ngFor="let day of cells">
+                <div *ngIf="!day"></div>
+                <button *ngIf="day" 
+                        (click)="selectedDay = day"
+                        [ngClass]="day === selectedDay ? 'bg-[#1565C0] text-white' : 'text-[#0D1B3E] hover:bg-[#EBF3FF] hover:text-[#1565C0]'"
+                        class="mx-auto w-7 h-7 flex items-center justify-center rounded-full text-[12px] font-medium relative transition-all">
+                  {{ day }}
+                  <span *ngIf="[8, 9, 10, 14].includes(day) && day !== selectedDay" class="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#1565C0]"></span>
+                </button>
+              </ng-container>
+            </div>
+          </div>
+          <div class="px-4 pb-4">
+            <button (click)="selectedDay = 10" class="w-full py-1.5 rounded-lg border border-[#DDE4F0] text-[12px] font-medium text-[#5A6A85] hover:bg-[#F0F4FA] hover:text-[#0D1B3E] transition-colors">
+              Hoje
+            </button>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="bg-white rounded-xl border border-[#DDE4F0]" style="box-shadow: 0 1px 4px rgba(13,27,62,0.05)">
+          <div class="px-5 py-4 border-b border-[#F0F4FA]">
+            <span class="text-[13px] font-semibold text-[#0D1B3E]">Filtros</span>
+          </div>
+          <div class="px-5 py-4 space-y-4">
+            
+            <!-- Tipo de Consulta -->
+            <div>
+              <div class="text-[11px] font-semibold text-[#5A6A85] uppercase tracking-wider mb-2.5">Tipo de Consulta</div>
+              <div class="space-y-2.5">
+                <label class="flex items-center gap-2.5 cursor-pointer group">
+                  <div (click)="toggleFilter('presencial')" class="w-4 h-4 rounded flex items-center justify-center shrink-0 border-2 transition-all cursor-pointer" [ngStyle]="{'border-color': filters.presencial ? '#1565C0' : '#DDE4F0', 'background-color': filters.presencial ? '#EBF3FF' : 'white'}">
+                    <div *ngIf="filters.presencial" class="w-2 h-2 rounded-sm bg-[#1565C0]"></div>
+                  </div>
+                  <span class="text-[13px] text-[#0D1B3E] group-hover:text-[#1565C0] transition-colors">Presencial</span>
+                  <span class="ml-auto text-[11px] font-semibold px-1.5 py-0.5 rounded-md bg-[#EBF3FF] text-[#1565C0]">2</span>
+                </label>
+
+                <label class="flex items-center gap-2.5 cursor-pointer group">
+                  <div (click)="toggleFilter('tele')" class="w-4 h-4 rounded flex items-center justify-center shrink-0 border-2 transition-all cursor-pointer" [ngStyle]="{'border-color': filters.tele ? '#7C3AED' : '#DDE4F0', 'background-color': filters.tele ? '#F3E8FF' : 'white'}">
+                    <div *ngIf="filters.tele" class="w-2 h-2 rounded-sm bg-[#7C3AED]"></div>
+                  </div>
+                  <span class="text-[13px] text-[#0D1B3E] group-hover:text-[#1565C0] transition-colors">Telemedicina</span>
+                  <span class="ml-auto text-[11px] font-semibold px-1.5 py-0.5 rounded-md bg-[#F3E8FF] text-[#7C3AED]">1</span>
+                </label>
+
+                <label class="flex items-center gap-2.5 cursor-pointer group">
+                  <div (click)="toggleFilter('retorno')" class="w-4 h-4 rounded flex items-center justify-center shrink-0 border-2 transition-all cursor-pointer" [ngStyle]="{'border-color': filters.retorno ? '#16A34A' : '#DDE4F0', 'background-color': filters.retorno ? '#DCFCE7' : 'white'}">
+                    <div *ngIf="filters.retorno" class="w-2 h-2 rounded-sm bg-[#16A34A]"></div>
+                  </div>
+                  <span class="text-[13px] text-[#0D1B3E] group-hover:text-[#1565C0] transition-colors">Retorno</span>
+                  <span class="ml-auto text-[11px] font-semibold px-1.5 py-0.5 rounded-md bg-[#DCFCE7] text-[#16A34A]">1</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Status -->
+            <div class="border-t border-[#F0F4FA] pt-4">
+              <div class="text-[11px] font-semibold text-[#5A6A85] uppercase tracking-wider mb-2.5">Status</div>
+              <div class="space-y-2.5">
+                <label class="flex items-center gap-2.5 cursor-pointer group">
+                  <div (click)="toggleFilter('confirmado')" class="w-4 h-4 rounded flex items-center justify-center shrink-0 border-2 transition-all cursor-pointer" [ngStyle]="{'border-color': filters.confirmado ? '#64748B' : '#DDE4F0', 'background-color': filters.confirmado ? '#F1F5F9' : 'white'}">
+                    <div *ngIf="filters.confirmado" class="w-2 h-2 rounded-sm bg-[#64748B]"></div>
+                  </div>
+                  <span class="text-[13px] text-[#0D1B3E] group-hover:text-[#1565C0] transition-colors">Confirmado</span>
+                </label>
+                
+                <label class="flex items-center gap-2.5 cursor-pointer group">
+                  <div (click)="toggleFilter('aguardando')" class="w-4 h-4 rounded flex items-center justify-center shrink-0 border-2 transition-all cursor-pointer" [ngStyle]="{'border-color': filters.aguardando ? '#1565C0' : '#DDE4F0', 'background-color': filters.aguardando ? '#DBEAFE' : 'white'}">
+                    <div *ngIf="filters.aguardando" class="w-2 h-2 rounded-sm bg-[#1565C0]"></div>
+                  </div>
+                  <span class="text-[13px] text-[#0D1B3E] group-hover:text-[#1565C0] transition-colors">Aguardando</span>
+                </label>
+
+                <label class="flex items-center gap-2.5 cursor-pointer group">
+                  <div (click)="toggleFilter('finalizado')" class="w-4 h-4 rounded flex items-center justify-center shrink-0 border-2 transition-all cursor-pointer" [ngStyle]="{'border-color': filters.finalizado ? '#15803D' : '#DDE4F0', 'background-color': filters.finalizado ? '#DCFCE7' : 'white'}">
+                    <div *ngIf="filters.finalizado" class="w-2 h-2 rounded-sm bg-[#15803D]"></div>
+                  </div>
+                  <span class="text-[13px] text-[#0D1B3E] group-hover:text-[#1565C0] transition-colors">Finalizado</span>
+                </label>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Right column (Timeline) ── -->
+      <div class="bg-white rounded-xl border border-[#DDE4F0] overflow-hidden flex flex-col" style="box-shadow: 0 1px 4px rgba(13,27,62,0.05)">
+        
+        <!-- Timeline header -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-[#DDE4F0] bg-[#FAFBFD] shrink-0">
+          <div class="text-[13px] font-semibold text-[#0D1B3E]">
+            Segunda-feira, {{ selectedDay }} de {{ MONTH_NAMES[calMonth] }}
+          </div>
+          <div class="flex items-center gap-1.5 text-[12px] text-[#5A6A85]">
+            <i class="bi bi-clock text-[#5A6A85]"></i>
+            <span class="font-medium text-[#DC2626]">{{ formatHourLabel(CURRENT_H) | slice:0:2 }}:{{ CURRENT_M }}</span>
+            <span>— horário atual</span>
+          </div>
+        </div>
+
+        <!-- Timeline grid (Scrollable) -->
+        <div class="overflow-y-auto flex-1 p-4">
+          <div class="flex">
+            
+            <!-- Hour labels -->
+            <div class="shrink-0 w-16 border-r border-[#DDE4F0] bg-white">
+              <div *ngFor="let h of hours" class="flex items-start justify-end pr-3 pt-1" [ngStyle]="{'height': HOUR_HEIGHT + 'px'}">
+                <span class="text-[11px] font-semibold text-[#5A6A85] leading-none">{{ formatHourLabel(h) }}</span>
+              </div>
+            </div>
+
+            <!-- Grid + appointments -->
+            <div class="flex-1 relative" [ngStyle]="{'height': TOTAL_HEIGHT + HOUR_HEIGHT + 'px'}">
+              
+              <!-- Hour lines -->
+              <div *ngFor="let h of hours; let i = index" class="absolute left-0 right-0 border-t border-[#EEF1F8]" [ngStyle]="{'top': (i * HOUR_HEIGHT) + 'px'}"></div>
+              
+              <!-- Half-hour lines -->
+              <div *ngFor="let h of hours.slice(0, -1); let i = index" class="absolute left-0 right-0 border-t border-dashed border-[#F0F4FA]" [ngStyle]="{'top': (i * HOUR_HEIGHT + HOUR_HEIGHT / 2) + 'px'}"></div>
+
+              <!-- Current time indicator -->
+              <div class="absolute left-0 right-0 z-20 flex items-center" [ngStyle]="{'top': CURRENT_TOP + 'px'}">
+                <div class="w-2.5 h-2.5 rounded-full bg-red-500 shrink-0 -ml-1.5" style="box-shadow: 0 0 0 3px rgba(239,68,68,0.2)"></div>
+                <div class="flex-1 h-px bg-red-500"></div>
+                <span class="shrink-0 text-[10px] font-bold text-red-500 bg-white px-1.5 py-0.5 rounded border border-red-200 ml-1 mr-2">{{ formatHourLabel(CURRENT_H) | slice:0:2 }}:{{ CURRENT_M }}</span>
+              </div>
+
+              <!-- Appointment blocks -->
+              <div *ngFor="let appt of filteredAppts" 
+                   class="absolute left-3 right-3 rounded-xl border-l-4 px-3 py-2.5 cursor-pointer hover:brightness-95 transition-all group"
+                   [ngStyle]="{
+                     'top': toTopPx(appt.startH, appt.startM) + 2 + 'px',
+                     'height': (toDurationPx(appt.startH, appt.startM, appt.endH, appt.endM) - 4) + 'px',
+                     'border-left-color': STATUS_CFG[appt.status].border,
+                     'background-color': STATUS_CFG[appt.status].bg,
+                     'border-top': '1px solid ' + STATUS_CFG[appt.status].border + '22',
+                     'border-right': '1px solid ' + STATUS_CFG[appt.status].border + '22',
+                     'border-bottom': '1px solid ' + STATUS_CFG[appt.status].border + '22'
+                   }">
+                <div class="flex items-start justify-between gap-2 h-full">
+                  <div class="flex-1 min-w-0 flex flex-col justify-between h-full">
+                    <div>
+                      <div class="flex items-center gap-1.5 mb-0.5">
+                        <i *ngIf="appt.type === 'tele'" class="bi bi-camera-video" [ngStyle]="{'color': STATUS_CFG[appt.status].border}"></i>
+                        <i *ngIf="appt.type !== 'tele'" class="bi bi-geo-alt" [ngStyle]="{'color': STATUS_CFG[appt.status].border}"></i>
+                        <span class="text-[12px] font-bold truncate" [ngStyle]="{'color': STATUS_CFG[appt.status].border}">{{ appt.patient }}</span>
+                      </div>
+                      <div class="text-[11px] text-[#5A6A85] truncate">{{ appt.reason }}</div>
+                    </div>
+                    <div *ngIf="(toDurationPx(appt.startH, appt.startM, appt.endH, appt.endM) - 4) > 50" class="text-[10px] font-medium mt-1" [ngStyle]="{'color': STATUS_CFG[appt.status].border + 'bb'}">
+                      {{ formatTimeRange(appt) }}
+                    </div>
+                  </div>
+                  <span class="shrink-0 text-[10px] font-semibold px-2 py-0.5 rounded-full" [ngStyle]="{'background-color': STATUS_CFG[appt.status].badge, 'color': STATUS_CFG[appt.status].badgeText}">
+                    {{ STATUS_CFG[appt.status].label }}
+                  </span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
