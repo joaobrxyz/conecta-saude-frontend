@@ -1,0 +1,139 @@
+<div class="px-4 sm:px-6 lg:px-8 py-7 min-h-[calc(100vh-60px)] max-w-[1400px] mx-auto">
+  
+  <!-- ── Page header ── -->
+  <div class="flex items-start justify-between mb-6 gap-4 flex-wrap">
+    <div>
+      <h1 class="text-[20px] font-bold text-[#0D1B3E] m-0 mb-1">Cadastros de Pacientes</h1>
+      <p class="text-[13px] text-[#5A6A85] m-0">Gerencie dados cadastrais e contatos</p>
+    </div>
+    <button class="flex items-center gap-1.5 h-[38px] px-[18px] bg-[#1565C0] text-white rounded-lg text-[13px] font-semibold cursor-pointer whitespace-nowrap shrink-0 hover:bg-[#0D47A1] transition-colors shadow-sm">
+      <i class="bi bi-plus-lg"></i> Novo Cadastro
+    </button>
+  </div>
+
+  <!-- ── Search & filter bar ── -->
+  <div class="bg-white border border-[#EEF1F8] rounded-lg px-4 py-3.5 flex items-center gap-3 mb-4 flex-wrap shadow-sm">
+    
+    <!-- Main search -->
+    <div class="flex-1 min-w-[260px] relative">
+      <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-[#94A3B8]"></i>
+      <input type="text" [(ngModel)]="search" placeholder="Buscar por nome ou CPF..." 
+             class="w-full h-[38px] pl-9 pr-3 border border-[#E2E8F0] rounded-lg text-[13px] text-[#0D1B3E] bg-[#FAFBFD] outline-none focus:border-[#1565C0]/50 focus:ring-2 focus:ring-[#1565C0]/10 transition-all">
+    </div>
+
+    <div class="flex gap-2.5 shrink-0">
+      <!-- Status filter -->
+      <div class="relative">
+        <select [(ngModel)]="statusFilter" class="appearance-none h-[38px] pl-3 pr-8 border border-[#E2E8F0] rounded-lg bg-[#FAFBFD] text-[13px] text-[#0D1B3E] cursor-pointer outline-none focus:border-[#1565C0]/50 transition-all">
+          <option value="Ativos">Status: Ativos</option>
+          <option value="Inativos">Status: Inativos</option>
+          <option value="Todos">Todos</option>
+        </select>
+        <i class="bi bi-chevron-down absolute right-2.5 top-1/2 -translate-y-1/2 text-[#5A6A85] text-xs pointer-events-none"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Table card ── -->
+  <div class="bg-white border border-[#DDE4F0] rounded-lg overflow-hidden shadow-sm">
+    <div class="overflow-x-auto">
+      <table class="w-full border-collapse min-w-[700px]">
+        <thead>
+          <tr class="bg-[#F8FAFD] border-b border-[#DDE4F0]">
+            <th class="py-3 px-5 text-left text-[11px] font-semibold text-[#5A6A85] tracking-[0.06em] uppercase whitespace-nowrap">Paciente & CPF</th>
+            <th class="py-3 px-5 text-left text-[11px] font-semibold text-[#5A6A85] tracking-[0.06em] uppercase whitespace-nowrap">Contato</th>
+            <th class="py-3 px-5 text-left text-[11px] font-semibold text-[#5A6A85] tracking-[0.06em] uppercase whitespace-nowrap">Próximo Agendamento</th>
+            <th class="py-3 px-5 text-right text-[11px] font-semibold text-[#5A6A85] tracking-[0.06em] uppercase whitespace-nowrap">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Empty State -->
+          <tr *ngIf="filteredPatients.length === 0">
+            <td colspan="4" class="py-12 px-5 text-center text-[#5A6A85] text-[14px]">
+              Nenhum paciente encontrado.
+            </td>
+          </tr>
+
+          <!-- Data Rows -->
+          <tr *ngFor="let p of filteredPatients; let last = last" 
+              class="hover:bg-[#FAFBFE] transition-colors" [ngClass]="{'border-b border-[#EEF1F8]': !last}">
+            
+            <!-- Paciente & CPF -->
+            <td class="py-4 px-5">
+              <div class="flex items-center gap-3">
+                <div class="w-[38px] h-[38px] rounded-full flex items-center justify-center text-[12px] font-bold shrink-0 tracking-[0.02em]" 
+                     [ngStyle]="{'background-color': p.avatarBg, 'color': p.avatarColor}">
+                  {{ p.initials }}
+                </div>
+                <div>
+                  <div class="text-[14px] font-semibold text-[#0D1B3E]">{{ p.name }}</div>
+                  <div class="text-[12px] text-[#5A6A85] mt-0.5">CPF: {{ p.cpf }}</div>
+                </div>
+              </div>
+            </td>
+
+            <!-- Contato -->
+            <td class="py-4 px-5">
+              <div class="flex items-center gap-1.5 text-[13px] text-[#374151]">
+                <i class="bi bi-telephone text-[#94A3B8]"></i> {{ p.phone }}
+              </div>
+            </td>
+
+            <!-- Próximo Agendamento -->
+            <td class="py-4 px-5">
+              <span class="text-[13px]" 
+                    [ngClass]="{
+                      'font-bold text-[#1565C0]': p.nextApptHighlight === 'blue', 
+                      'text-[#94A3B8]': p.nextApptHighlight === 'muted',
+                      'text-[#374151]': !p.nextApptHighlight
+                    }">
+                {{ p.nextAppt }}
+              </span>
+            </td>
+
+            <!-- Ações -->
+            <td class="py-4 px-5">
+              <div class="flex items-center justify-end gap-2">
+                <button class="flex items-center gap-1.5 h-[30px] px-3 border border-[#DDE4F0] rounded-md bg-white text-[#374151] text-[12px] font-medium transition-colors hover:border-[#1565C0] hover:text-[#1565C0]">
+                  <i class="bi bi-pencil"></i> Editar
+                </button>
+                <button class="flex items-center gap-1.5 h-[30px] px-3 border border-[#DDE4F0] rounded-md bg-white text-[#374151] text-[12px] font-medium transition-colors hover:border-[#16A34A] hover:text-[#16A34A]">
+                  <i class="bi bi-calendar-plus"></i> Agendar
+                </button>
+              </div>
+            </td>
+            
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── Pagination Footer ── -->
+    <div class="flex items-center justify-between px-5 py-3 border-t border-[#EEF1F8] bg-[#FAFBFD]">
+      <span class="text-[13px] text-[#5A6A85]">
+        Exibindo <span class="font-semibold text-[#0D1B3E]">1 a 5</span> de <span class="font-semibold text-[#0D1B3E]">842</span> cadastros
+      </span>
+
+      <div class="flex items-center gap-1">
+        <button (click)="setPage(page > 1 ? page - 1 : 1)" [disabled]="page === 1" 
+                class="min-w-[32px] h-[32px] px-2 border rounded-md flex items-center justify-center text-[13px] transition-colors"
+                [ngClass]="page === 1 ? 'border-[#DDE4F0] bg-white text-[#CBD5E1] cursor-default' : 'border-[#DDE4F0] bg-white text-[#374151] hover:bg-[#F8FAFC]'">
+          <i class="bi bi-chevron-left text-xs"></i>
+        </button>
+        
+        <button *ngFor="let n of [1, 2, 3]" (click)="setPage(n)" 
+                class="min-w-[32px] h-[32px] px-2 border rounded-md flex items-center justify-center text-[13px] transition-colors font-medium"
+                [ngClass]="page === n ? 'border-[#1565C0] bg-[#1565C0] text-white' : 'border-[#DDE4F0] bg-white text-[#374151] hover:bg-[#F8FAFC]'">
+          {{ n }}
+        </button>
+        
+        <span class="w-[32px] h-[32px] flex items-center justify-center text-[13px] text-[#94A3B8]">…</span>
+        
+        <button (click)="setPage(page + 1)" 
+                class="min-w-[32px] h-[32px] px-2 border border-[#DDE4F0] rounded-md bg-white text-[#374151] flex items-center justify-center text-[13px] transition-colors hover:bg-[#F8FAFC]">
+          Próx. <i class="bi bi-chevron-right text-xs ml-1"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
