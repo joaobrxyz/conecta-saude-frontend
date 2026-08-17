@@ -10,7 +10,7 @@ type Role = "paciente" | "medico" | "recepcionista" | "administrador";
   imports: [CommonModule, FormsModule],
   templateUrl: './login.html'
 })
-export class LoginComponent {
+export class Login {
   selectedRole: Role = 'paciente';
   showPassword = false;
   email = '';
