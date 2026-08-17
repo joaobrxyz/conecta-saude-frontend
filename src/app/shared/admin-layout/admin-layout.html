@@ -1,0 +1,62 @@
+<div class="flex h-screen bg-[#F0F4FA] overflow-hidden" style="font-family: 'Inter', system-ui, sans-serif;">
+  
+  <!-- Overlay mobile -->
+  <div *ngIf="sidebarOpen" class="fixed inset-0 bg-black/30 z-30 lg:hidden" (click)="sidebarOpen = false"></div>
+  
+  <!-- Sidebar -->
+  <aside [ngClass]="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'" 
+         class="fixed lg:static top-0 left-0 h-full z-40 lg:z-auto flex flex-col w-[232px] bg-white border-r border-[#EEF1F8] shrink-0 transition-transform duration-300">
+    
+    <div class="flex items-center justify-between px-5 h-[60px] border-b border-[#EEF1F8] shrink-0">
+      <div class="flex items-center gap-2.5">
+        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-[#1565C0]"><i class="bi bi-heart-pulse text-white text-[15px]"></i></div>
+        <span class="text-[#0D1B3E] font-bold text-[14px] tracking-tight">Conecta<span class="text-[#16A34A]">Saúde</span></span>
+      </div>
+      <button (click)="sidebarOpen = false" class="lg:hidden text-[#8A9AB8] hover:text-[#0D1B3E] p-1"><i class="bi bi-x-lg"></i></button>
+    </div>
+
+    <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+      <p class="text-[10px] font-bold text-[#9AAAC0] uppercase tracking-widest px-2.5 mb-3">Menu Principal</p>
+      <button *ngFor="let item of navItems" [routerLink]="item.route" (click)="sidebarOpen = false"
+              [ngClass]="router.url.includes(item.route) ? 'bg-[#EBF3FF] text-[#1565C0]' : 'text-[#5A6A85] hover:bg-[#F5F8FF] hover:text-[#0D1B3E]'"
+              class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-colors text-left">
+        <i [class]="'bi ' + item.icon"></i>
+        <span>{{ item.label }}</span>
+      </button>
+    </nav>
+
+    <div class="px-4 py-3.5 border-t border-[#EEF1F8] flex items-center gap-3 shrink-0">
+      <div class="w-9 h-9 rounded-full bg-gradient-to-br from-[#3B28CC] to-[#1565C0] flex items-center justify-center text-white text-[14px] font-bold shrink-0 shadow-sm">{{ userInitials }}</div>
+      <div class="min-w-0">
+        <p class="text-[13px] font-semibold text-[#0D1B3E] truncate leading-tight">{{ userName }}</p>
+        <p class="text-[11px] text-[#5A6A85] mt-0.5">{{ userRole }}</p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    
+    <!-- Topbar -->
+    <header class="bg-white border-b border-[#EEF1F8] flex items-center px-6 gap-4 shrink-0 sticky top-0 z-20 h-[60px]">
+      <button (click)="sidebarOpen = true" class="lg:hidden text-[#8A9AB8] hover:text-[#0D1B3E] p-1"><i class="bi bi-list text-xl"></i></button>
+      
+      <div class="relative flex-1 max-w-[440px] bg-[#F0F4FA] border border-[#EEF1F8] rounded-lg h-9 flex items-center px-3 gap-2">
+        <i class="bi bi-search text-[#5A6A85]"></i>
+        <input [(ngModel)]="query" placeholder="Buscar usuários, médicos ou logs..." class="bg-transparent border-none outline-none text-[13px] text-[#0D1B3E] w-full placeholder:text-[#9AAAC0]">
+      </div>
+
+      <div class="ml-auto flex items-center gap-3">
+        <button class="relative w-9 h-9 flex items-center justify-center rounded-lg border border-[#EEF1F8] hover:bg-[#F0F4FA] transition-colors bg-white">
+          <i class="bi bi-bell text-[#5A6A85]"></i>
+          <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-600 rounded-full border-2 border-white"></span>
+        </button>
+        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-[#3B28CC] to-[#1565C0] flex items-center justify-center text-white text-sm font-bold shadow-sm cursor-pointer">{{ userInitials }}</div>
+      </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

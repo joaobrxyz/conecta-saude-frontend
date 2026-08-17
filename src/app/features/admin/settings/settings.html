@@ -1,0 +1,201 @@
+<div class="px-4 sm:px-6 lg:px-8 py-7 min-h-[calc(100vh-60px)] max-w-[1200px] mx-auto">
+  
+  <!-- ── Page Header ── -->
+  <div class="flex items-start justify-between mb-7 flex-wrap gap-4">
+    <div>
+      <h1 class="text-[22px] font-bold text-[#0D1B3E] tracking-tight mb-1">Configurações do Sistema</h1>
+      <p class="text-[13.5px] text-[#5A6A85]">Gerencie os dados da clínica e políticas globais</p>
+    </div>
+
+    <!-- Save Feedback -->
+    <div [ngClass]="saved ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1 pointer-events-none'"
+         class="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#F0FDF4] border border-[rgba(22,163,74,0.25)] text-[13px] font-semibold text-[#16A34A] shadow-sm transition-all duration-300">
+      <i class="bi bi-check-lg"></i> Configurações salvas!
+    </div>
+  </div>
+
+  <!-- ── Two-column layout ── -->
+  <div class="flex flex-col md:flex-row items-start gap-5">
+    
+    <!-- ── Sidebar Nav ── -->
+    <div class="bg-white border border-[#DDE4F0] rounded-lg overflow-hidden w-full md:w-[240px] shrink-0 shadow-sm self-start">
+      <div class="px-4 py-3 border-b border-[#EEF1F8]">
+        <span class="text-[11px] font-bold text-[#9AAAC0] uppercase tracking-[0.08em]">Configurações</span>
+      </div>
+      <nav class="p-2 space-y-1">
+        <button *ngFor="let item of SECTIONS" 
+                (click)="activeSection = item.id"
+                [ngClass]="activeSection === item.id ? 'bg-[#EBF3FF] text-[#1565C0] font-semibold' : 'text-[#5A6A85] font-medium hover:bg-[#F5F8FF] hover:text-[#0D1B3E]'"
+                class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-md text-[13.5px] transition-colors text-left group">
+          <i [class]="'bi ' + item.icon" [ngClass]="activeSection === item.id ? 'text-[#1565C0]' : 'text-[#9AAAC0] group-hover:text-[#5A6A85]'"></i>
+          {{ item.id }}
+        </button>
+      </nav>
+    </div>
+
+    <!-- ── Main Content ── -->
+    <div class="flex-1 w-full min-w-0" [ngSwitch]="activeSection">
+
+      <!-- ============================================== -->
+      <!-- ABA 1: DADOS DA CLÍNICA                        -->
+      <!-- ============================================== -->
+      <div *ngSwitchCase="'Dados da Clínica'" class="space-y-5">
+        
+        <!-- Card 1: Identidade Visual -->
+        <div class="bg-white border border-[#DDE4F0] rounded-lg shadow-sm p-6 sm:p-7">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-9 h-9 rounded-lg bg-[#EBF3FF] flex items-center justify-center shrink-0">
+              <i class="bi bi-building text-[#1565C0] text-lg"></i>
+            </div>
+            <div>
+              <h2 class="text-[14.5px] font-bold text-[#0D1B3E]">Identidade Visual e Informações</h2>
+              <p class="text-[12px] text-[#5A6A85]">Dados principais e logo da clínica</p>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row items-start gap-7">
+            <!-- Logo Uploader -->
+            <div class="shrink-0">
+              <p class="text-[12px] font-semibold text-[#5A6A85] mb-2">Logo da Clínica</p>
+              <div class="relative w-24 h-24 rounded-xl border-2 border-dashed border-[#DDE4F0] bg-[#EBF3FF] flex items-center justify-center cursor-pointer overflow-hidden group">
+                <i class="bi bi-heart-pulse text-[#1565C0] text-4xl"></i>
+                <div class="absolute inset-0 bg-[#1565C0]/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <i class="bi bi-camera text-white text-xl"></i>
+                </div>
+              </div>
+              <p class="text-[11px] text-[#9AAAC0] mt-1.5 max-w-[96px] text-center leading-tight">PNG ou SVG recomendado</p>
+            </div>
+
+            <!-- Form Grid -->
+            <div class="flex-1 w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="sm:col-span-2">
+                <label class="block text-[12px] font-semibold text-[#5A6A85] mb-1.5">Nome da Clínica</label>
+                <input type="text" [(ngModel)]="nomeClinica" class="w-full h-10 px-3 rounded-lg border border-[#DDE4F0] bg-white text-[13.5px] text-[#0D1B3E] outline-none focus:border-[#1565C0] transition-colors">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block text-[12px] font-semibold text-[#5A6A85] mb-1.5">Razão Social</label>
+                <input type="text" [(ngModel)]="razaoSocial" class="w-full h-10 px-3 rounded-lg border border-[#DDE4F0] bg-white text-[13.5px] text-[#0D1B3E] outline-none focus:border-[#1565C0] transition-colors">
+              </div>
+              <div>
+                <label class="block text-[12px] font-semibold text-[#5A6A85] mb-1.5">CNPJ</label>
+                <input type="text" [(ngModel)]="cnpj" class="w-full h-10 px-3 rounded-lg border border-[#DDE4F0] bg-white text-[13.5px] text-[#0D1B3E] outline-none focus:border-[#1565C0] transition-colors">
+              </div>
+              <div>
+                <label class="block text-[12px] font-semibold text-[#5A6A85] mb-1.5">Registro no Conselho</label>
+                <input type="text" [(ngModel)]="registroConselho" placeholder="CRM / CFM da Clínica" class="w-full h-10 px-3 rounded-lg border border-[#DDE4F0] bg-white text-[13.5px] text-[#0D1B3E] outline-none focus:border-[#1565C0] transition-colors">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Contato e Endereço -->
+        <div class="bg-white border border-[#DDE4F0] rounded-lg shadow-sm p-6 sm:p-7">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-9 h-9 rounded-lg bg-[#EBF3FF] flex items-center justify-center shrink-0">
+              <i class="bi bi-geo-alt text-[#1565C0] text-lg"></i>
+            </div>
+            <div>
+              <h2 class="text-[14.5px] font-bold text-[#0D1B3E]">Contato e Endereço</h2>
+              <p class="text-[12px] text-[#5A6A85]">Informações de localização e comunicação</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="relative">
+              <label class="block text-[12px] font-semibold text-[#5A6A85] mb-1.5">E-mail de Contato</label>
+              <i class="bi bi-envelope absolute left-3 top-[34px] text-[#9AAAC0]"></i>
+              <input type="email" [(ngModel)]="email" class="w-full h-10 pl-9 pr-3 rounded-lg border border-[#DDE4F0] bg-white text-[13.5px] text-[#0D1B3E] outline-none focus:border-[#1565C0] transition-colors">
+            </div>
+            <div class="relative">
+              <label class="block text-[12px] font-semibold text-[#5A6A85] mb-1.5">Telefone Principal</label>
+              <i class="bi bi-telephone absolute left-3 top-[34px] text-[#9AAAC0]"></i>
+              <input type="text" [(ngModel)]="telefone" class="w-full h-10 pl-9 pr-3 rounded-lg border border-[#DDE4F0] bg-white text-[13.5px] text-[#0D1B3E] outline-none focus:border-[#1565C0] transition-colors">
+            </div>
+
+            <div class="sm:col-span-2 h-px bg-[#EEF1F8] my-1"></div>
+
+            <div>
+              <label class="block text-[12px] font-semibold text-[#5A6A85] mb-1.5">CEP</label>
+              <input type="text" [(ngModel)]="cep" placeholder="00000-000" class="w-full h-10 px-3 rounded-lg border border-[#DDE4F0] bg-white text-[13.5px] text-[#0D1B3E] outline-none focus:border-[#1565C0] transition-colors">
+            </div>
+            <div>
+              <label class="block text-[12px] font-semibold text-[#5A6A85] mb-1.5">UF</label>
+              <input type="text" [(ngModel)]="uf" class="w-full h-10 px-3 rounded-lg border border-[#DDE4F0] bg-white text-[13.5px] text-[#0D1B3E] outline-none focus:border-[#1565C0] transition-colors">
+            </div>
+            <div class="sm:col-span-2 relative">
+              <label class="block text-[12px] font-semibold text-[#5A6A85] mb-1.5">Endereço</label>
+              <i class="bi bi-geo-alt absolute left-3 top-[34px] text-[#9AAAC0]"></i>
+              <input type="text" [(ngModel)]="endereco" class="w-full h-10 pl-9 pr-3 rounded-lg border border-[#DDE4F0] bg-white text-[13.5px] text-[#0D1B3E] outline-none focus:border-[#1565C0] transition-colors">
+            </div>
+            <div>
+              <label class="block text-[12px] font-semibold text-[#5A6A85] mb-1.5">Bairro</label>
+              <input type="text" [(ngModel)]="bairro" placeholder="Bela Vista" class="w-full h-10 px-3 rounded-lg border border-[#DDE4F0] bg-white text-[13.5px] text-[#0D1B3E] outline-none focus:border-[#1565C0] transition-colors">
+            </div>
+            <div>
+              <label class="block text-[12px] font-semibold text-[#5A6A85] mb-1.5">Cidade</label>
+              <input type="text" [(ngModel)]="cidade" class="w-full h-10 px-3 rounded-lg border border-[#DDE4F0] bg-white text-[13.5px] text-[#0D1B3E] outline-none focus:border-[#1565C0] transition-colors">
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: Políticas de Agendamento -->
+        <div class="bg-white border border-[#DDE4F0] rounded-lg shadow-sm p-6 sm:p-7">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-9 h-9 rounded-lg bg-[#EBF3FF] flex items-center justify-center shrink-0">
+              <i class="bi bi-calendar3 text-[#1565C0] text-lg"></i>
+            </div>
+            <div>
+              <h2 class="text-[14.5px] font-bold text-[#0D1B3E]">Políticas de Agendamento</h2>
+              <p class="text-[12px] text-[#5A6A85]">Regras globais para marcação de consultas</p>
+            </div>
+          </div>
+
+          <div class="divide-y divide-[#EEF1F8]">
+            <div *ngFor="let policy of policies" class="py-4 flex items-start justify-between gap-6">
+              <div>
+                <p class="text-[14px] font-semibold text-[#0D1B3E] mb-1">{{ policy.label }}</p>
+                <p class="text-[12.5px] text-[#5A6A85] leading-relaxed">{{ policy.desc }}</p>
+              </div>
+              <!-- Toggle Button -->
+              <button (click)="togglePolicy(policy.id)" [ngClass]="policy.on ? 'bg-[#1565C0]' : 'bg-[#CBD5E1]'" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors shrink-0 mt-1">
+                <span [ngClass]="policy.on ? 'translate-x-6' : 'translate-x-1'" class="inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center justify-end gap-3 pt-2 pb-6">
+          <button class="px-5 py-2 rounded-lg border border-[#DDE4F0] bg-white text-[13.5px] font-medium text-[#5A6A85] hover:bg-[#F8FAFC] transition-colors">
+            Descartar Alterações
+          </button>
+          <button (click)="saveSettings()" class="flex items-center gap-2 px-6 py-2 rounded-lg border border-transparent bg-[#1565C0] text-white text-[13.5px] font-semibold shadow-sm shadow-blue-900/20 hover:bg-[#0D47A1] transition-colors">
+            <i class="bi bi-save"></i> Salvar Configurações
+          </button>
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- PLACEHOLDERS: Outras Abas                      -->
+      <!-- ============================================== -->
+      <div *ngSwitchDefault class="bg-white border border-[#DDE4F0] rounded-lg shadow-sm p-6 sm:p-7">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-9 h-9 rounded-lg bg-[#EBF3FF] flex items-center justify-center shrink-0">
+            <i [class]="'bi ' + SECTIONS[1].icon + ' text-[#1565C0] text-lg'"></i> <!-- Placeholder genérico -->
+          </div>
+          <div>
+            <h2 class="text-[14.5px] font-bold text-[#0D1B3E]">{{ activeSection }}</h2>
+            <p class="text-[12px] text-[#5A6A85]">Configurações futuras do sistema</p>
+          </div>
+        </div>
+        
+        <div class="bg-[#F8FAFC] border border-dashed border-[#DDE4F0] rounded-lg p-10 flex flex-col items-center justify-center text-center">
+          <i class="bi bi-tools text-[#9AAAC0] text-4xl mb-3"></i>
+          <p class="text-[14px] font-semibold text-[#5A6A85] mb-1">{{ activeSection }}</p>
+          <p class="text-[13px] text-[#9AAAC0]">As configurações desta seção estarão disponíveis em breve.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

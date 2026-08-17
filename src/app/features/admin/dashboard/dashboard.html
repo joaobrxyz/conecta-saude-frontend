@@ -1,0 +1,153 @@
+<div class="p-6 md:p-8 max-w-[1400px] mx-auto space-y-6">
+
+  <!-- ── Page Header ── -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-[22px] font-bold text-[#0D1B3E] tracking-tight mb-1">Dashboard Administrativo</h1>
+      <p class="text-[13.5px] text-[#5A6A85]">Visão geral da operação e gestão da equipe</p>
+    </div>
+    <div class="flex items-center gap-2.5">
+      <button class="flex items-center gap-2 px-3.5 py-2 border border-[#DDE4F0] bg-white rounded-lg text-[13px] font-medium text-[#0D1B3E] hover:bg-[#F8FAFC] transition-colors shadow-sm">
+        <i class="bi bi-calendar3 text-[#5A6A85]"></i> Agosto 2026 <i class="bi bi-chevron-down text-[#5A6A85] text-[10px]"></i>
+      </button>
+      <button class="flex items-center gap-2 px-4 py-2 bg-[#1565C0] text-white rounded-lg text-[13px] font-semibold hover:bg-[#0D47A1] transition-colors shadow-sm">
+        <i class="bi bi-person-plus-fill"></i> Novo Usuário
+      </button>
+    </div>
+  </div>
+
+  <!-- ── KPI Cards ── -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+    <div *ngFor="let kpi of kpis" class="bg-white border border-[#DDE4F0] rounded-lg p-5 flex flex-col gap-3 shadow-sm">
+      <div class="flex items-start justify-between">
+        <div class="w-11 h-11 rounded-lg flex items-center justify-center shrink-0" [ngStyle]="{'background-color': kpi.iconBg, 'color': kpi.iconColor}">
+          <i [class]="'bi ' + kpi.icon + ' text-lg'"></i>
+        </div>
+        <span class="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded" [ngStyle]="{'color': kpi.badgeColor, 'background-color': kpi.badgeColor + '18'}">
+          {{ kpi.badge }}
+        </span>
+      </div>
+      <div>
+        <p class="text-[26px] font-bold text-[#0D1B3E] leading-none">{{ kpi.value }}</p>
+        <p class="text-[12px] font-medium text-[#5A6A85] mt-1.5">{{ kpi.label }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Middle Grid (Chart + Team) ── -->
+  <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
+    
+    <!-- Chart: Evolução de Atendimentos -->
+    <div class="xl:col-span-2 bg-white border border-[#DDE4F0] rounded-lg shadow-sm overflow-hidden flex flex-col">
+      <div class="px-6 py-5 flex items-center justify-between border-b border-[#F0F4FA]">
+        <div>
+          <h2 class="text-[15px] font-bold text-[#0D1B3E]">Evolução de Atendimentos</h2>
+          <p class="text-[12px] text-[#5A6A85] mt-0.5">Volume de Consultas (2026)</p>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2"><div class="w-3 h-1 rounded bg-[#1565C0]"></div><span class="text-[11px] font-medium text-[#5A6A85]">Agendadas</span></div>
+          <div class="flex items-center gap-2"><div class="w-3 h-1 rounded border-t-2 border-dashed border-[#16A34A]"></div><span class="text-[11px] font-medium text-[#5A6A85]">Realizadas</span></div>
+        </div>
+      </div>
+      
+      <!-- CSS Grid Chart implementation -->
+      <div class="p-6 pt-8 flex-1 flex flex-col min-h-[260px]">
+        <div class="relative flex-1 flex items-end justify-between px-6 border-l border-b border-[#EEF1F8]">
+          
+          <!-- Y Axis Lines -->
+          <div class="absolute inset-0 flex flex-col justify-between pointer-events-none">
+            <div *ngFor="let val of [300, 225, 150, 75, 0]" class="w-full border-t border-dashed border-[#EEF1F8] flex items-start -ml-6">
+              <span class="text-[10px] text-[#9AAAC0] -mt-2 bg-white pr-2 -ml-2">{{ val }}</span>
+            </div>
+          </div>
+
+          <!-- Bars -->
+          <div *ngFor="let m of months; let i = index" class="relative w-12 h-full flex items-end justify-center gap-1 z-10 group">
+            
+            <!-- Agendadas -->
+            <div class="w-4 bg-[#1565C0] rounded-t relative transition-all duration-500 ease-out" [ngStyle]="{'height': getBarHeight(agendadas[i])}">
+              <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-[#1565C0] opacity-0 group-hover:opacity-100 transition-opacity">{{ agendadas[i] }}</div>
+            </div>
+            
+            <!-- Realizadas -->
+            <div class="w-4 bg-[#DCFCE7] border border-[#16A34A] border-b-0 rounded-t relative transition-all duration-500 ease-out" [ngStyle]="{'height': getBarHeight(realizadas[i])}">
+              <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-[#16A34A] opacity-0 group-hover:opacity-100 transition-opacity">{{ realizadas[i] }}</div>
+            </div>
+
+            <span class="absolute -bottom-6 text-[11px] font-medium text-[#5A6A85]">{{ m }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Team Distribution -->
+    <div class="bg-white border border-[#DDE4F0] rounded-lg shadow-sm p-6 flex flex-col">
+      <h2 class="text-[15px] font-bold text-[#0D1B3E]">Distribuição da Equipe</h2>
+      <p class="text-[12px] text-[#5A6A85] mt-0.5 mb-6">Usuários ativos por função</p>
+      
+      <div class="space-y-5 flex-1">
+        <div *ngFor="let role of teamRoles">
+          <div class="flex justify-between items-end mb-2">
+            <span class="text-[13px] font-medium text-[#0D1B3E]">{{ role.role }}</span>
+            <span class="text-[13px] font-bold text-[#0D1B3E]">{{ role.count }}</span>
+          </div>
+          <div class="h-1.5 w-full bg-[#EEF1F8] rounded-full overflow-hidden">
+            <div class="h-full rounded-full transition-all duration-700" [ngStyle]="{'width': (role.count / totalTeam) * 100 + '%', 'background-color': role.color}"></div>
+          </div>
+          <p class="text-[11px] text-[#9AAAC0] mt-1.5">{{ ((role.count / totalTeam) * 100) | number:'1.0-0' }}% do total</p>
+        </div>
+      </div>
+
+      <div class="mt-6 p-3 rounded-lg bg-[#F0F4FA] flex justify-between items-center border border-[#E2E8F0]">
+        <span class="text-[12px] font-semibold text-[#1565C0]">Total de usuários</span>
+        <span class="text-[16px] font-bold text-[#1565C0]">{{ totalTeam }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Audit Log Table ── -->
+  <div class="bg-white border border-[#DDE4F0] rounded-lg shadow-sm overflow-hidden">
+    <div class="px-6 py-5 border-b border-[#EEF1F8] flex items-center justify-between">
+      <div>
+        <h2 class="text-[15px] font-bold text-[#0D1B3E]">Últimas Ações do Sistema</h2>
+        <p class="text-[12px] text-[#5A6A85] mt-0.5">Log de auditoria e segurança em tempo real</p>
+      </div>
+      <button class="text-[12px] font-semibold text-[#1565C0] hover:underline">Ver todos os logs &rarr;</button>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-[#F8FAFD] border-b border-[#EEF1F8]">
+            <th class="py-3 px-6 text-[11px] font-semibold text-[#9AAAC0] uppercase tracking-wider whitespace-nowrap">Usuário</th>
+            <th class="py-3 px-6 text-[11px] font-semibold text-[#9AAAC0] uppercase tracking-wider whitespace-nowrap">Ação Registrada</th>
+            <th class="py-3 px-6 text-[11px] font-semibold text-[#9AAAC0] uppercase tracking-wider whitespace-nowrap">Data/Hora</th>
+            <th class="py-3 px-6 text-[11px] font-semibold text-[#9AAAC0] uppercase tracking-wider whitespace-nowrap text-right">Status</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#EEF1F8]">
+          <tr *ngFor="let log of auditLogs" class="hover:bg-[#FAFBFE] transition-colors">
+            <td class="py-3.5 px-6">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br flex items-center justify-center text-white text-[11px] font-bold shrink-0 shadow-sm" [ngClass]="log.grad">{{ log.avatar }}</div>
+                <span class="text-[13px] font-medium text-[#0D1B3E] whitespace-nowrap">{{ log.user }}</span>
+              </div>
+            </td>
+            <td class="py-3.5 px-6">
+              <span class="text-[13px] text-[#374151] truncate block max-w-[300px]">{{ log.action }}</span>
+            </td>
+            <td class="py-3.5 px-6">
+              <span class="text-[13px] text-[#5A6A85] whitespace-nowrap">{{ log.time }}</span>
+            </td>
+            <td class="py-3.5 px-6 text-right">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold whitespace-nowrap" [ngClass]="log.statusCls">
+                <i [class]="'bi ' + log.statusIcon"></i> {{ log.status }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

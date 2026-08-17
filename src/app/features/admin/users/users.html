@@ -1,0 +1,181 @@
+<div class="px-4 sm:px-6 lg:px-8 py-7 min-h-[calc(100vh-60px)] max-w-[1400px] mx-auto">
+  
+  <!-- ── Page Header ── -->
+  <div class="flex items-start justify-between mb-6 flex-wrap gap-4">
+    <div>
+      <h1 class="text-[22px] font-bold text-[#0D1B3E] tracking-tight leading-none mb-1.5">Gestão de Usuários</h1>
+      <p class="text-[13.5px] text-[#5A6A85]">Adicione, edite ou remova acessos da equipe ao sistema</p>
+    </div>
+    <button class="flex items-center gap-2 h-[38px] px-4 rounded-lg bg-[#1565C0] text-white text-[13.5px] font-semibold cursor-pointer shadow-sm shadow-blue-900/20 hover:bg-[#0D47A1] transition-colors whitespace-nowrap">
+      <i class="bi bi-person-plus-fill"></i> Novo Usuário
+    </button>
+  </div>
+
+  <!-- ── Search & Filter Bar ── -->
+  <div class="bg-white border border-[#DDE4F0] rounded-lg p-3.5 mb-4 flex flex-col sm:flex-row items-center gap-3 shadow-sm">
+    
+    <!-- Main Search -->
+    <div class="flex-1 w-full relative">
+      <i class="bi bi-search absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9AAAC0]"></i>
+      <input type="text" [(ngModel)]="searchVal" placeholder="Buscar por nome, e-mail ou CRM..." 
+             class="w-full h-[38px] pl-9 pr-3 rounded-lg border border-[#DDE4F0] bg-[#F8FAFC] text-[13.5px] text-[#0D1B3E] outline-none focus:border-[#1565C0]/50 transition-colors">
+    </div>
+
+    <!-- Filters -->
+    <div class="flex items-center gap-2.5 w-full sm:w-auto shrink-0">
+      <div class="flex items-center gap-1.5 px-2">
+        <i class="bi bi-funnel text-[#9AAAC0]"></i>
+        <span class="text-[12.5px] font-medium text-[#5A6A85]">Filtros:</span>
+      </div>
+
+      <!-- Role Dropdown -->
+      <div class="relative flex-1 sm:flex-none">
+        <select [(ngModel)]="roleFilter" class="w-full sm:w-[150px] appearance-none h-[38px] pl-3 pr-8 rounded-lg border border-[#DDE4F0] bg-white text-[13px] text-[#0D1B3E] outline-none focus:border-[#1565C0]/50 cursor-pointer transition-colors">
+          <option value="Todos">Função: Todos</option>
+          <option value="Médicos">Médicos</option>
+          <option value="Recepção">Recepção</option>
+          <option value="Administradores">Administradores</option>
+        </select>
+        <i class="bi bi-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[#9AAAC0] text-xs pointer-events-none"></i>
+      </div>
+
+      <!-- Status Dropdown -->
+      <div class="relative flex-1 sm:flex-none">
+        <select [(ngModel)]="statusFilter" class="w-full sm:w-[140px] appearance-none h-[38px] pl-3 pr-8 rounded-lg border border-[#DDE4F0] bg-white text-[13px] text-[#0D1B3E] outline-none focus:border-[#1565C0]/50 cursor-pointer transition-colors">
+          <option value="Todos">Status: Todos</option>
+          <option value="Ativos">Ativos</option>
+          <option value="Inativos">Inativos</option>
+        </select>
+        <i class="bi bi-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[#9AAAC0] text-xs pointer-events-none"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Table Card ── -->
+  <div class="bg-white border border-[#DDE4F0] rounded-lg shadow-sm overflow-hidden flex flex-col min-h-0">
+    
+    <!-- Table Header -->
+    <div class="flex items-center justify-between p-4 border-b border-[#DDE4F0] bg-white shrink-0">
+      <div class="flex items-center gap-2.5">
+        <h2 class="text-[14.5px] font-bold text-[#0D1B3E] m-0">Usuários do Sistema</h2>
+        <span class="text-[11px] font-semibold text-[#1565C0] bg-[#EBF3FF] px-2 py-0.5 rounded-full">{{ filteredUsers.length }} encontrados</span>
+      </div>
+      <span class="text-[12px] text-[#5A6A85] hidden sm:block">Total: 12 usuários cadastrados</span>
+    </div>
+
+    <!-- Table content -->
+    <div class="overflow-x-auto flex-1">
+      <table class="w-full text-left border-collapse min-w-[900px]">
+        <thead>
+          <tr class="bg-[#FAFBFE] border-b border-[#DDE4F0]">
+            <th class="py-3 px-6 text-[11px] font-semibold text-[#5A6A85] tracking-[0.06em] uppercase whitespace-nowrap">Usuário</th>
+            <th class="py-3 px-6 text-[11px] font-semibold text-[#5A6A85] tracking-[0.06em] uppercase whitespace-nowrap">Função / Perfil</th>
+            <th class="py-3 px-6 text-[11px] font-semibold text-[#5A6A85] tracking-[0.06em] uppercase whitespace-nowrap">Último Acesso</th>
+            <th class="py-3 px-6 text-[11px] font-semibold text-[#5A6A85] tracking-[0.06em] uppercase whitespace-nowrap">Status</th>
+            <th class="py-3 px-6 text-[11px] font-semibold text-[#5A6A85] tracking-[0.06em] uppercase whitespace-nowrap text-right">Ações</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#EEF1F8]">
+          <!-- Empty state -->
+          <tr *ngIf="filteredUsers.length === 0">
+            <td colspan="5" class="py-12 text-center text-[#5A6A85] text-[14px]">
+              Nenhum usuário encontrado para estes filtros.
+            </td>
+          </tr>
+
+          <!-- Rows -->
+          <tr *ngFor="let u of filteredUsers" class="hover:bg-[#F7FAFF] transition-colors group">
+            
+            <!-- Usuário -->
+            <td class="py-4 px-6">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-full bg-gradient-to-br flex items-center justify-center text-white text-[12px] font-bold shrink-0 tracking-wide" [ngClass]="u.avatarGrad">
+                  {{ u.initials }}
+                </div>
+                <div class="min-w-0">
+                  <p class="text-[13.5px] font-semibold text-[#0D1B3E] leading-tight truncate">{{ u.name }}</p>
+                  <p class="text-[12px] text-[#5A6A85] leading-tight mt-0.5 truncate">{{ u.email }}</p>
+                </div>
+              </div>
+            </td>
+
+            <!-- Função -->
+            <td class="py-4 px-6">
+              <div class="flex flex-col gap-1 items-start">
+                <span class="inline-block text-[11px] font-semibold px-2 py-0.5 rounded" [ngStyle]="{'background-color': getRoleConfig(u.role).bg, 'color': getRoleConfig(u.role).color}">
+                  {{ u.role }}
+                </span>
+                <p *ngIf="u.roleDetail" class="text-[11px] text-[#5A6A85] truncate max-w-[200px]">{{ u.roleDetail }}</p>
+              </div>
+            </td>
+
+            <!-- Último Acesso -->
+            <td class="py-4 px-6">
+              <span class="text-[12.5px] text-[#5A6A85] font-medium">{{ u.lastAccess }}</span>
+            </td>
+
+            <!-- Status -->
+            <td class="py-4 px-6">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11.5px] font-semibold"
+                    [ngClass]="u.status === 'active' ? 'bg-[#DCFCE7] text-[#15803D]' : 'bg-[#F1F5F9] text-[#475569]'">
+                <span class="w-1.5 h-1.5 rounded-full" [ngClass]="u.status === 'active' ? 'bg-[#16A34A]' : 'bg-[#94A3B8]'"></span>
+                {{ u.status === 'active' ? 'Ativo' : 'Inativo' }}
+              </span>
+            </td>
+
+            <!-- Ações -->
+            <td class="py-4 px-6">
+              <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+                
+                <!-- Editar (Apenas ativos) -->
+                <button *ngIf="u.status === 'active'" class="flex items-center gap-1.5 h-8 px-3 rounded border border-[#DDE4F0] bg-white text-[12px] font-medium text-[#0D1B3E] hover:border-[#1565C0] hover:text-[#1565C0] transition-colors shadow-sm">
+                  <i class="bi bi-pencil"></i> Editar
+                </button>
+
+                <!-- Reativar (Apenas inativos) -->
+                <button *ngIf="u.status === 'inactive'" class="flex items-center gap-1.5 h-8 px-3 rounded border border-[#BBF7D0] bg-[#F0FDF4] text-[12px] font-medium text-[#15803D] hover:bg-[#DCFCE7] transition-colors shadow-sm">
+                  <i class="bi bi-arrow-clockwise"></i> Reativar
+                </button>
+
+                <!-- Botão de Opções (3 pontinhos) -->
+                <button class="w-8 h-8 rounded border border-[#DDE4F0] bg-white flex items-center justify-center text-[#5A6A85] hover:bg-[#F0F4FA] transition-colors shadow-sm">
+                  <i class="bi bi-three-dots text-lg"></i>
+                </button>
+              </div>
+            </td>
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── Pagination Footer ── -->
+    <div class="flex items-center justify-between px-6 py-3.5 border-t border-[#DDE4F0] bg-[#FAFBFD] shrink-0">
+      <span class="text-[12.5px] text-[#5A6A85]">
+        Exibindo <span class="font-bold text-[#0D1B3E]">1 a 5</span> de <span class="font-bold text-[#0D1B3E]">12</span> usuários
+      </span>
+
+      <div class="flex items-center gap-1">
+        <button (click)="setPage(page > 1 ? page - 1 : 1)" [disabled]="page === 1" 
+                class="w-8 h-8 flex items-center justify-center rounded border transition-colors"
+                [ngClass]="page === 1 ? 'border-[#DDE4F0] bg-white text-[#CBD5E1] cursor-not-allowed' : 'border-[#DDE4F0] bg-white text-[#374151] hover:bg-[#F8FAFC]'">
+          <i class="bi bi-chevron-left text-xs"></i>
+        </button>
+        
+        <button *ngFor="let n of [1, 2, 3]" (click)="setPage(n)" 
+                class="w-8 h-8 flex items-center justify-center rounded border text-[13px] font-medium transition-colors"
+                [ngClass]="page === n ? 'border-[#1565C0] bg-[#1565C0] text-white' : 'border-[#DDE4F0] bg-white text-[#374151] hover:bg-[#F8FAFC]'">
+          {{ n }}
+        </button>
+        
+        <span class="w-8 h-8 flex items-center justify-center text-[#94A3B8] text-[13px]">…</span>
+        
+        <button (click)="setPage(page + 1)" 
+                class="w-8 h-8 flex items-center justify-center rounded border border-[#DDE4F0] bg-white text-[#374151] hover:bg-[#F8FAFC] transition-colors">
+          <i class="bi bi-chevron-right text-xs"></i>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
