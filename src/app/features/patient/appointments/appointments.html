@@ -1,0 +1,284 @@
+<div class="p-4 sm:p-6">
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+
+    <main class="flex-1 overflow-y-auto">
+      <div class="px-4 sm:px-6 lg:px-8 py-6 max-w-[1100px] mx-auto space-y-6">
+
+        <!-- Header da Página -->
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+          <div>
+            <h1 class="text-[1.75rem] font-bold text-[#0D1B3E] tracking-tight leading-tight">Minhas Consultas</h1>
+            <p class="text-[13.5px] text-[#5A6A85] mt-1">Gerencie seus agendamentos e histórico clínico</p>
+          </div>
+          <button routerLink="/paciente/agendar" class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#1565C0] text-white text-[13.5px] font-semibold hover:bg-[#1248A0] transition-colors shadow-md shadow-blue-200/60 self-start">
+            <i class="bi bi-plus-lg"></i> Agendar Nova Consulta
+          </button>
+        </div>
+
+        <!-- Abas e Filtros -->
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+          
+          <div class="flex items-center bg-white rounded-xl border border-[rgba(21,101,192,0.1)] p-1 shadow-sm gap-0.5">
+            <button (click)="tab = 'proximas'" [ngClass]="tab === 'proximas' ? 'bg-[#1565C0] text-white shadow-sm' : 'text-[#5A6A85] hover:text-[#0D1B3E] hover:bg-[#F5F8FF]'" class="flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-semibold transition-all duration-150 whitespace-nowrap">
+              Próximas <span [ngClass]="tab === 'proximas' ? 'bg-white/25 text-white' : 'bg-[#E8EDF4] text-[#8A9AB8]'" class="text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">{{ counts.proximas }}</span>
+            </button>
+            <button (click)="tab = 'historico'" [ngClass]="tab === 'historico' ? 'bg-[#1565C0] text-white shadow-sm' : 'text-[#5A6A85] hover:text-[#0D1B3E] hover:bg-[#F5F8FF]'" class="flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-semibold transition-all duration-150 whitespace-nowrap">
+              Histórico <span [ngClass]="tab === 'historico' ? 'bg-white/25 text-white' : 'bg-[#E8EDF4] text-[#8A9AB8]'" class="text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">{{ counts.historico }}</span>
+            </button>
+            <button (click)="tab = 'canceladas'" [ngClass]="tab === 'canceladas' ? 'bg-[#1565C0] text-white shadow-sm' : 'text-[#5A6A85] hover:text-[#0D1B3E] hover:bg-[#F5F8FF]'" class="flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-semibold transition-all duration-150 whitespace-nowrap">
+              Canceladas <span [ngClass]="tab === 'canceladas' ? 'bg-white/25 text-white' : 'bg-[#E8EDF4] text-[#8A9AB8]'" class="text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">{{ counts.canceladas }}</span>
+            </button>
+          </div>
+
+          <div class="flex items-center gap-2 sm:ml-auto flex-wrap">
+            <div class="relative">
+              <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-[#B8C7DC] text-sm"></i>
+              <input (input)="search = $any($event.target).value" [value]="search" placeholder="Buscar por médico ou especialidade" class="pl-8 pr-4 py-2 text-[12.5px] rounded-lg border border-[#E2EAF4] bg-white text-[#0D1B3E] placeholder-[#B8C7DC] outline-none focus:border-[#1565C0] focus:ring-2 focus:ring-[#1565C0]/10 transition-all w-[240px]">
+            </div>
+
+            <div class="relative">
+              <button (click)="periodOpen = !periodOpen" class="flex items-center gap-2 px-3.5 py-2 rounded-lg border border-[#E2EAF4] bg-white text-[12.5px] font-medium text-[#5A6A85] hover:border-[rgba(21,101,192,0.3)] hover:text-[#0D1B3E] transition-all whitespace-nowrap">
+                <i class="bi bi-calendar-event text-[#9AAAC0]"></i> {{ period }}
+                <i class="bi bi-chevron-down text-[#9AAAC0] transition-transform" [ngClass]="{'rotate-180': periodOpen}"></i>
+              </button>
+              <div *ngIf="periodOpen" class="absolute right-0 top-10 w-52 bg-white rounded-xl shadow-xl border border-[rgba(21,101,192,0.1)] z-20 overflow-hidden py-1">
+                <button *ngFor="let opt of PERIOD_OPTIONS" (click)="period = opt; periodOpen = false"
+                        [ngClass]="period === opt ? 'bg-[#EBF3FF] text-[#1565C0] font-semibold' : 'text-[#5A6A85] hover:bg-[#F5F8FF] hover:text-[#0D1B3E]'"
+                        class="w-full text-left px-4 py-2.5 text-[12.5px] transition-colors">
+                  {{ opt }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resultados Resumo -->
+        <div *ngIf="search" class="flex items-center gap-2 text-[12.5px] text-[#5A6A85]">
+          <i class="bi bi-search text-[#9AAAC0]"></i>
+          <span>{{ filteredAppointments.length }} resultado{{ filteredAppointments.length !== 1 ? 's' : '' }} para <strong class="text-[#0D1B3E]">"{{ search }}"</strong></span>
+          <button (click)="search = ''" class="ml-1 flex items-center gap-1 text-[#DC2626] hover:underline underline-offset-2">
+            <i class="bi bi-x-lg text-xs"></i> limpar
+          </button>
+        </div>
+
+        <!-- Estado Vazio -->
+        <div *ngIf="filteredAppointments.length === 0" class="flex flex-col items-center justify-center py-20 text-center">
+          <div class="w-16 h-16 rounded-2xl bg-[#F0F4FA] flex items-center justify-center mb-4">
+            <i [class]="'bi ' + getEmptyStateConfig().icon + ' text-[#B8C7DC] text-3xl'"></i>
+          </div>
+          <p class="text-[15px] font-semibold text-[#0D1B3E]">{{ getEmptyStateConfig().title }}</p>
+          <p class="text-[13px] text-[#8A9AB8] mt-1 max-w-xs leading-snug">{{ getEmptyStateConfig().desc }}</p>
+        </div>
+
+        <!-- Lista de Consultas -->
+        <div *ngIf="filteredAppointments.length > 0" class="space-y-4">
+          <div *ngFor="let appt of filteredAppointments" [ngClass]="tab === 'canceladas' ? 'border-[rgba(220,38,38,0.12)]' : 'border-[rgba(21,101,192,0.1)]'" class="bg-white rounded-xl border shadow-sm overflow-hidden transition-all duration-150 hover:shadow-md">
+            
+            <div [ngClass]="tab === 'canceladas' ? 'border-[#FEF2F2] bg-[#FFFAFA]' : 'border-[#F3F6FB] bg-[#FAFCFF]'" class="flex items-center justify-between px-5 py-3 border-b">
+              <div class="flex items-center gap-3">
+                <div [ngClass]="tab === 'canceladas' ? 'bg-[#FEF2F2] text-[#DC2626]' : 'bg-[#EBF3FF] text-[#1565C0]'" class="flex items-center justify-center w-9 h-9 rounded-lg shrink-0">
+                  <i class="bi bi-calendar-event text-base"></i>
+                </div>
+                <div>
+                  <p class="text-[13.5px] font-bold text-[#0D1B3E]">{{ appt.date }}</p>
+                  <div class="flex items-center gap-1.5 mt-0.5">
+                    <i class="bi bi-clock text-[#9AAAC0] text-[11px]"></i>
+                    <span class="text-[12px] text-[#5A6A85]">{{ appt.time }}</span>
+                    <span class="text-[#C8D4E4] mx-1">·</span>
+                    <span *ngIf="appt.modalidade === 'telemedicina'" class="inline-flex items-center gap-1 text-[10px] font-semibold text-[#7C3AED] bg-[#F5F3FF] border border-[rgba(124,58,237,0.15)] px-2 py-0.5 rounded-full"><i class="bi bi-camera-video"></i> Telemedicina</span>
+                    <span *ngIf="appt.modalidade === 'presencial'" class="inline-flex items-center gap-1 text-[10px] font-semibold text-[#1565C0] bg-[#EBF3FF] border border-[rgba(21,101,192,0.15)] px-2 py-0.5 rounded-full"><i class="bi bi-heart-pulse"></i> Presencial</span>
+                  </div>
+                </div>
+              </div>
+              <span [ngClass]="getStatusConfig(appt.status).cls" class="inline-flex items-center gap-1.5 text-[10.5px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full border whitespace-nowrap">
+                <span [ngClass]="getStatusConfig(appt.status).dot" class="w-1.5 h-1.5 rounded-full shrink-0"></span>
+                {{ getStatusConfig(appt.status).label }}
+              </span>
+            </div>
+
+            <div class="px-5 py-4">
+              <div class="flex items-start gap-4">
+                <div class="relative shrink-0">
+                  <div class="w-[52px] h-[52px] rounded-xl bg-gradient-to-br flex items-center justify-center text-white text-lg font-bold shadow-sm" [ngClass]="appt.avatarGrad">{{ appt.avatar }}</div>
+                  <div *ngIf="tab === 'historico'" class="absolute -bottom-1 -right-1 w-[18px] h-[18px] rounded-full bg-[#16A34A] border-2 border-white flex items-center justify-center">
+                    <i class="bi bi-check-circle-fill text-white text-[10px]"></i>
+                  </div>
+                </div>
+
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-start justify-between gap-2 flex-wrap">
+                    <div>
+                      <h3 class="text-[15px] font-bold text-[#0D1B3E] leading-tight">{{ appt.doctor }}</h3>
+                      <p class="text-[12.5px] text-[#5A6A85] mt-0.5">{{ appt.specialty }} · {{ appt.crm }}</p>
+                    </div>
+                    <div *ngIf="appt.rating" class="flex items-center gap-1 shrink-0">
+                      <div class="flex gap-0.5 text-[10px]">
+                        <i *ngFor="let s of [1,2,3,4,5]" [class]="s <= (appt.rating || 0) ? 'bi bi-star-fill text-[#F59E0B]' : 'bi bi-star-fill text-[#E2E8F0]'"></i>
+                      </div>
+                      <span class="text-[11px] text-[#9AAAC0]">{{ appt.rating }} ({{ appt.ratingCount }})</span>
+                    </div>
+                  </div>
+
+                  <div class="flex flex-wrap gap-x-4 gap-y-1.5 mt-2.5">
+                    <div class="flex items-center gap-1.5 text-[12px] text-[#5A6A85]"><i class="bi bi-geo-alt text-[#1565C0] shrink-0"></i> {{ appt.location }}</div>
+                    <div *ngIf="appt.phone" class="flex items-center gap-1.5 text-[12px] text-[#5A6A85]"><i class="bi bi-telephone text-[#1565C0] shrink-0"></i> {{ appt.phone }}</div>
+                  </div>
+
+                  <div class="mt-2 flex items-center gap-2">
+                    <div class="w-1 h-1 rounded-full bg-[#C8D4E4]"></div>
+                    <p class="text-[12px] text-[#8A9AB8] italic">{{ appt.reason }}</p>
+                  </div>
+
+                  <div *ngIf="tab === 'canceladas' && appt.cancelReason" class="mt-2.5 flex items-center gap-2 p-2.5 rounded-lg bg-[#FEF2F2] border border-[rgba(220,38,38,0.12)]">
+                    <i class="bi bi-exclamation-circle text-[#DC2626] shrink-0 text-[12px]"></i>
+                    <p class="text-[11.5px] text-[#DC2626] font-medium">{{ appt.cancelReason }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="px-5 pb-4 pt-0">
+              <div class="h-px bg-[#F3F6FB] mb-3.5"></div>
+
+              <div *ngIf="tab === 'proximas'" class="flex flex-col sm:flex-row gap-2">
+                <button *ngIf="appt.modalidade === 'telemedicina'" class="sm:flex-1 flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg bg-[#1565C0] text-white text-[12.5px] font-semibold hover:bg-[#1248A0] transition-colors shadow-sm shadow-blue-200">
+                  <i class="bi bi-camera-video"></i> Entrar na Consulta
+                </button>
+                <button (click)="rescheduleTarget = appt" class="sm:flex-1 flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg border border-[rgba(21,101,192,0.2)] text-[12.5px] font-medium text-[#1565C0] hover:bg-[#EBF3FF] transition-colors">
+                  <i class="bi bi-arrow-repeat"></i> Reagendar
+                </button>
+                <button (click)="cancelTarget = appt" class="sm:flex-1 flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg border border-[rgba(220,38,38,0.15)] text-[12.5px] font-medium text-[#DC2626] hover:bg-[#FEF2F2] transition-colors">
+                  <i class="bi bi-x-circle"></i> Cancelar
+                </button>
+              </div>
+
+              <div *ngIf="tab === 'historico'" class="flex flex-col sm:flex-row gap-2">
+                <button class="sm:flex-1 flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg border border-[rgba(21,101,192,0.2)] text-[12.5px] font-medium text-[#1565C0] hover:bg-[#EBF3FF] transition-colors">
+                  <i class="bi bi-file-earmark-text"></i> Ver Detalhes
+                </button>
+                <button class="sm:flex-1 flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg bg-[#16A34A] text-white text-[12.5px] font-semibold hover:bg-[#15803D] transition-colors shadow-sm shadow-green-200">
+                  <i class="bi bi-calendar-event"></i> Agendar Retorno
+                </button>
+              </div>
+
+              <div *ngIf="tab === 'canceladas'" class="flex flex-col sm:flex-row gap-2">
+                <button (click)="rescheduleTarget = appt" class="sm:flex-1 flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg bg-[#1565C0] text-white text-[12.5px] font-semibold hover:bg-[#1248A0] transition-colors shadow-sm shadow-blue-200">
+                  <i class="bi bi-arrow-repeat"></i> Reagendar esta Consulta
+                </button>
+                <button class="sm:flex-1 flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg border border-[rgba(21,101,192,0.18)] text-[12.5px] font-medium text-[#1565C0] hover:bg-[#EBF3FF] transition-colors">
+                  <i class="bi bi-file-earmark-text"></i> Ver Detalhes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paginação -->
+        <div *ngIf="filteredAppointments.length > 0" class="flex items-center justify-between pt-2 pb-4">
+          <p class="text-[12px] text-[#9AAAC0]">Exibindo {{ filteredAppointments.length }} de {{ filteredAppointments.length }} consulta{{ filteredAppointments.length !== 1 ? 's' : '' }}</p>
+          <div class="flex items-center gap-1">
+            <button class="w-8 h-8 rounded-lg text-[12px] font-medium transition-colors bg-[#1565C0] text-white">1</button>
+            <button class="w-8 h-8 rounded-lg text-[12px] font-medium transition-colors text-[#5A6A85] hover:bg-[#F0F4FA]">2</button>
+            <button class="w-8 h-8 rounded-lg text-[12px] font-medium transition-colors text-[#5A6A85] hover:bg-[#F0F4FA]">3</button>
+            <button class="w-8 h-8 rounded-lg text-[12px] text-[#5A6A85] hover:bg-[#F0F4FA] transition-colors flex items-center justify-center">
+              <i class="bi bi-chevron-right text-xs"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Cancelamento -->
+  <div *ngIf="cancelTarget" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-[460px] border border-[rgba(220,38,38,0.08)]">
+      <div class="flex items-center justify-between px-6 py-5 border-b border-[#F3F6FB]">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-[#FEF2F2] flex items-center justify-center">
+            <i class="bi bi-x-circle text-[#DC2626] text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-[15px] font-bold text-[#0D1B3E]">Cancelar Consulta</h3>
+            <p class="text-[12px] text-[#9AAAC0] mt-0.5">{{ cancelTarget.doctor }} · {{ cancelTarget.date }}, {{ cancelTarget.time }}</p>
+          </div>
+        </div>
+        <button (click)="cancelTarget = null" class="text-[#B8C7DC] hover:text-[#5A6A85] transition-colors p-1"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <div class="px-6 py-5 space-y-4">
+        <div class="flex items-start gap-3 p-3.5 rounded-xl bg-[#FFFBEB] border border-[rgba(217,119,6,0.2)]">
+          <i class="bi bi-exclamation-circle text-[#D97706] shrink-0 mt-0.5"></i>
+          <div>
+            <p class="text-[12.5px] font-semibold text-[#D97706]">Atenção</p>
+            <p class="text-[12px] text-[#92400E] mt-0.5 leading-snug">Cancelamentos realizados com menos de 24 horas de antecedência podem gerar cobrança de taxa de cancelamento conforme política da clínica.</p>
+          </div>
+        </div>
+        <div>
+          <label class="block text-[12px] font-semibold text-[#5A6A85] mb-2">Motivo do cancelamento</label>
+          <div class="grid grid-cols-1 gap-1.5">
+            <button *ngFor="let r of CANCEL_REASONS" (click)="cancelReason = r" [ngClass]="cancelReason === r ? 'border-[#DC2626] bg-[#FEF2F2] text-[#DC2626] font-medium' : 'border-[#E8EDF4] text-[#5A6A85] hover:border-[rgba(220,38,38,0.25)] hover:bg-[#FFFAFA]'" class="flex items-center gap-3 p-3 rounded-lg border text-left text-[12.5px] transition-all">
+              <div [ngClass]="cancelReason === r ? 'border-[#DC2626] bg-[#DC2626]' : 'border-[#C8D4E4]'" class="w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center">
+                <div *ngIf="cancelReason === r" class="w-1.5 h-1.5 rounded-full bg-white"></div>
+              </div>
+              {{ r }}
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="px-6 pb-6 flex gap-3">
+        <button (click)="cancelTarget = null" class="flex-1 py-2.5 rounded-lg border border-[#E2EAF4] text-[13px] font-medium text-[#5A6A85] hover:bg-[#F5F8FF] transition-colors">Voltar</button>
+        <button (click)="cancelTarget = null" [disabled]="!cancelReason" [ngClass]="cancelReason ? 'bg-[#DC2626] hover:bg-[#B91C1C] shadow-md shadow-red-200' : 'bg-[#F5A5A5] cursor-not-allowed'" class="flex-1 py-2.5 rounded-lg text-[13px] font-semibold text-white transition-colors">Confirmar Cancelamento</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Reagendamento -->
+  <div *ngIf="rescheduleTarget" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-[480px]">
+      <div class="flex items-center justify-between px-6 py-5 border-b border-[#F3F6FB]">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-[#EBF3FF] flex items-center justify-center">
+            <i class="bi bi-arrow-repeat text-[#1565C0] text-lg"></i>
+          </div>
+          <div>
+            <h3 class="text-[15px] font-bold text-[#0D1B3E]">Reagendar Consulta</h3>
+            <p class="text-[12px] text-[#9AAAC0] mt-0.5">{{ rescheduleTarget.doctor }} · {{ rescheduleTarget.specialty }}</p>
+          </div>
+        </div>
+        <button (click)="rescheduleTarget = null" class="text-[#B8C7DC] hover:text-[#5A6A85] transition-colors p-1"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <div class="px-6 py-5 space-y-4">
+        <div class="flex items-center gap-3 p-3.5 rounded-xl bg-[#F5F8FF] border border-[rgba(21,101,192,0.1)]">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br flex items-center justify-center text-white font-bold text-sm shrink-0" [ngClass]="rescheduleTarget.avatarGrad">{{ rescheduleTarget.avatar }}</div>
+          <div>
+            <p class="text-[13px] font-semibold text-[#0D1B3E]">{{ rescheduleTarget.doctor }}</p>
+            <p class="text-[11.5px] text-[#5A6A85]">Consulta atual: {{ rescheduleTarget.date }} às {{ rescheduleTarget.time }}</p>
+          </div>
+        </div>
+        <div>
+          <label class="block text-[12px] font-semibold text-[#5A6A85] mb-1.5">Nova data</label>
+          <div class="relative">
+            <i class="bi bi-calendar absolute left-3 top-1/2 -translate-y-1/2 text-[#B8C7DC]"></i>
+            <input type="date" class="w-full pl-9 pr-4 py-2.5 text-[13px] rounded-lg border border-[#E2EAF4] bg-[#F5F8FF] text-[#0D1B3E] outline-none focus:border-[#1565C0] focus:ring-2 focus:ring-[#1565C0]/10 transition-all">
+          </div>
+        </div>
+        <div>
+          <label class="block text-[12px] font-semibold text-[#5A6A85] mb-1.5">Horário disponível</label>
+          <div class="grid grid-cols-4 gap-1.5">
+            <button *ngFor="let t of RESCHEDULE_TIMES" (click)="rescheduleTime = t" [ngClass]="rescheduleTime === t ? 'border-[#1565C0] bg-[#1565C0] text-white shadow-sm' : 'border-[#E2EAF4] text-[#5A6A85] hover:border-[#1565C0] hover:text-[#1565C0] hover:bg-[#EBF3FF]'" class="py-2 rounded-lg border text-[12px] font-medium transition-all">{{ t }}</button>
+          </div>
+        </div>
+        <div>
+          <label class="block text-[12px] font-semibold text-[#5A6A85] mb-1.5">Modalidade</label>
+          <div class="flex gap-2">
+            <button [ngClass]="rescheduleTarget.modalidade === 'presencial' ? 'border-[#1565C0] bg-[#EBF3FF] text-[#1565C0]' : 'border-[#E2EAF4] text-[#5A6A85] hover:border-[rgba(21,101,192,0.3)]'" class="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg border text-[12.5px] font-medium transition-all capitalize"><i class="bi bi-heart-pulse"></i> Presencial</button>
+            <button [ngClass]="rescheduleTarget.modalidade === 'telemedicina' ? 'border-[#1565C0] bg-[#EBF3FF] text-[#1565C0]' : 'border-[#E2EAF4] text-[#5A6A85] hover:border-[rgba(21,101,192,0.3)]'" class="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg border text-[12.5px] font-medium transition-all capitalize"><i class="bi bi-camera-video"></i> Telemedicina</button>
+          </div>
+        </div>
+      </div>
+      <div class="px-6 pb-6 flex gap-3">
+        <button (click)="rescheduleTarget = null" class="flex-1 py-2.5 rounded-lg border border-[#E2EAF4] text-[13px] font-medium text-[#5A6A85] hover:bg-[#F5F8FF] transition-colors">Cancelar</button>
+        <button (click)="rescheduleTarget = null" [disabled]="!rescheduleTime" [ngClass]="rescheduleTime ? 'bg-[#1565C0] hover:bg-[#1248A0] shadow-md shadow-blue-200' : 'bg-[#A0BBE0] cursor-not-allowed'" class="flex-1 py-2.5 rounded-lg text-[13px] font-semibold text-white transition-colors">Confirmar Reagendamento</button>
+      </div>
+    </div>
+  </div>
+</div>

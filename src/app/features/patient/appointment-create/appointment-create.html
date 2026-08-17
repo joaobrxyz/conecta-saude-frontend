@@ -1,0 +1,262 @@
+<div class="px-4 sm:px-6 lg:px-8 py-6 max-w-[1100px] mx-auto">
+  
+  <!-- Page header -->
+  <div class="flex items-start justify-between gap-4 mb-6">
+    <div>
+      <h1 class="text-[22px] font-bold text-[#0D1B3E] tracking-tight leading-tight">Agendar Consulta</h1>
+      <p class="text-[13px] text-[#5A6A85] mt-1">Preencha os dados abaixo para encontrar o melhor horário disponível</p>
+    </div>
+    <button (click)="goBack()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-[#DDE4F0] bg-white text-[13px] text-[#5A6A85] font-medium hover:border-[#5A6A85]/30 hover:text-[#0D1B3E] transition-colors shadow-[0_1px_4px_rgba(13,27,62,0.05)]">
+      <i class="bi bi-arrow-left"></i> Voltar
+    </button>
+  </div>
+
+  <!-- Success state -->
+  <div *ngIf="confirmed" class="flex flex-col items-center justify-center py-20 gap-5 bg-white rounded-xl border border-[#DDE4F0] shadow-sm">
+    <div class="w-16 h-16 rounded-full bg-[#DCFCE7] flex items-center justify-center">
+      <i class="bi bi-check-circle-fill text-[36px] text-[#16A34A]"></i>
+    </div>
+    <div class="text-center">
+      <div class="text-[20px] font-bold text-[#0D1B3E] mb-1">Consulta agendada!</div>
+      <div class="text-[13px] text-[#5A6A85]">
+        {{ profissional }} · {{ formatSelectedDate() }} às {{ selectedTime }}
+      </div>
+    </div>
+    <button (click)="confirmed = false; selectedDay = null; selectedTime = null" 
+            class="mt-2 px-5 py-2.5 rounded-lg bg-[#1565C0] text-white text-[13px] font-semibold hover:bg-[#0D47A1] transition-colors shadow-[0_2px_8px_rgba(21,101,192,0.25)]">
+      Agendar outra consulta
+    </button>
+  </div>
+
+  <!-- Form state -->
+  <div *ngIf="!confirmed" class="flex flex-col lg:flex-row gap-5">
+    
+    <!-- Form column -->
+    <div class="flex-1 space-y-4 min-w-0">
+      
+      <!-- Step 1: Especialidade e Médico -->
+      <div class="bg-white rounded-xl border border-[#DDE4F0] shadow-[0_1px_4px_rgba(13,27,62,0.05)]">
+        <div class="flex items-center gap-3 px-6 py-4 border-b border-[#F0F4FA]">
+          <div class="w-6 h-6 rounded-full flex items-center justify-center text-white text-[11px] font-bold bg-[#1565C0] shrink-0">1</div>
+          <span class="text-[13px] font-semibold text-[#0D1B3E]">Especialidade e Médico</span>
+        </div>
+        <div class="p-6">
+          <div class="flex flex-col sm:flex-row gap-4">
+            
+            <div class="flex flex-col gap-1.5 flex-1">
+              <label class="text-[12px] font-semibold text-[#0D1B3E]">Especialidade</label>
+              <div class="relative">
+                <select [ngModel]="especialidade" (ngModelChange)="onEspecialidadeChange($event)" class="w-full px-3.5 py-2.5 text-[13px] border border-[#DDE4F0] rounded-lg text-[#0D1B3E] bg-white outline-none focus:border-[#1565C0]/50 focus:ring-2 focus:ring-[#1565C0]/10 transition appearance-none pr-8">
+                  <option *ngFor="let esp of especialidades" [value]="esp">{{ esp }}</option>
+                </select>
+                <i class="bi bi-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[#5A6A85] pointer-events-none"></i>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5 flex-1">
+              <label class="text-[12px] font-semibold text-[#0D1B3E]">Profissional</label>
+              <div class="relative">
+                <select [(ngModel)]="profissional" class="w-full px-3.5 py-2.5 text-[13px] border border-[#DDE4F0] rounded-lg text-[#0D1B3E] bg-white outline-none focus:border-[#1565C0]/50 focus:ring-2 focus:ring-[#1565C0]/10 transition appearance-none pr-8">
+                  <option *ngFor="let prof of profissionaisList" [value]="prof">{{ prof }}</option>
+                </select>
+                <i class="bi bi-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[#5A6A85] pointer-events-none"></i>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Doctor info chip -->
+          <div *ngIf="profissional" class="mt-4 flex items-center gap-3 p-3 rounded-xl bg-[#F0F4FA] border border-[#DDE4F0]">
+            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-[#1565C0] to-[#42A5F5] flex items-center justify-center text-white text-[13px] font-bold shrink-0">
+              {{ getProfInitial(profissional) }}
+            </div>
+            <div>
+              <div class="text-[13px] font-semibold text-[#0D1B3E]">{{ profissional }}</div>
+              <div class="text-[12px] text-[#5A6A85]">{{ especialidade }} · CRM 12345-SP</div>
+            </div>
+            <div class="ml-auto flex items-center gap-1 text-[12px] text-[#16A34A] font-medium">
+              <div class="w-1.5 h-1.5 rounded-full bg-[#16A34A]"></div> Disponível
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Data e Horário -->
+      <div class="bg-white rounded-xl border border-[#DDE4F0] shadow-[0_1px_4px_rgba(13,27,62,0.05)]">
+        <div class="flex items-center gap-3 px-6 py-4 border-b border-[#F0F4FA]">
+          <div class="w-6 h-6 rounded-full flex items-center justify-center text-white text-[11px] font-bold bg-[#1565C0] shrink-0">2</div>
+          <span class="text-[13px] font-semibold text-[#0D1B3E]">Data e Horário</span>
+        </div>
+        <div class="p-6">
+          
+          <!-- MiniCalendar -->
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <button (click)="prevMonth()" class="w-8 h-8 flex items-center justify-center rounded-lg border border-[#DDE4F0] hover:bg-[#F0F4FA] transition-colors">
+                <i class="bi bi-chevron-left text-[#5A6A85]"></i>
+              </button>
+              <span class="text-[13px] font-semibold text-[#0D1B3E]">{{ monthNames[calMonth] }} {{ calYear }}</span>
+              <button (click)="nextMonth()" class="w-8 h-8 flex items-center justify-center rounded-lg border border-[#DDE4F0] hover:bg-[#F0F4FA] transition-colors">
+                <i class="bi bi-chevron-right text-[#5A6A85]"></i>
+              </button>
+            </div>
+
+            <div class="grid grid-cols-7 mb-1">
+              <div *ngFor="let w of weekdays" class="text-center text-[11px] font-semibold text-[#5A6A85] py-1">{{ w }}</div>
+            </div>
+
+            <div class="grid grid-cols-7 gap-y-1">
+              <ng-container *ngFor="let day of calendarCells">
+                <div *ngIf="day === null"></div>
+                <button *ngIf="day !== null" 
+                        [disabled]="isPast(day)"
+                        (click)="selectDay(day)"
+                        class="mx-auto w-8 h-8 flex items-center justify-center rounded-full text-[13px] font-medium transition-all"
+                        [ngClass]="{
+                          'text-[#CBD5E1] cursor-not-allowed': isPast(day),
+                          'bg-[#1565C0] text-white shadow-md': selectedDay === day,
+                          'border border-[#1565C0] text-[#1565C0]': selectedDay !== day && isToday(day),
+                          'text-[#0D1B3E] hover:bg-[#EBF3FF] hover:text-[#1565C0]': selectedDay !== day && !isPast(day) && !isToday(day)
+                        }">
+                  {{ day }}
+                </button>
+              </ng-container>
+            </div>
+          </div>
+
+          <!-- Time slots -->
+          <div class="mt-6 pt-5 border-t border-[#F0F4FA]">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-[12px] font-semibold text-[#0D1B3E]">Horários disponíveis</span>
+              <span *ngIf="selectedDay" class="text-[11px] text-[#5A6A85] capitalize">{{ formatSelectedDateShort() }}</span>
+            </div>
+            
+            <div class="grid grid-cols-4 sm:grid-cols-5 gap-2">
+              <button *ngFor="let t of horarios" 
+                      [disabled]="unavailable.includes(t)"
+                      (click)="selectedTime = t"
+                      class="py-2 rounded-lg text-[13px] font-medium border transition-all"
+                      [ngClass]="{
+                        'border-[#F0F4FA] text-[#CBD5E1] bg-[#FAFBFD] cursor-not-allowed line-through': unavailable.includes(t),
+                        'border-[#1565C0] bg-[#1565C0] text-white shadow-sm': selectedTime === t,
+                        'border-[#DDE4F0] text-[#0D1B3E] hover:border-[#1565C0]/40 hover:text-[#1565C0] hover:bg-[#EBF3FF]': selectedTime !== t && !unavailable.includes(t)
+                      }">
+                {{ t }}
+              </button>
+            </div>
+
+            <!-- Legend -->
+            <div class="flex items-center gap-4 mt-4">
+              <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded border border-[#1565C0] bg-[#1565C0]"></div><span class="text-[11px] text-[#5A6A85]">Selecionado</span></div>
+              <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded border border-[#DDE4F0]"></div><span class="text-[11px] text-[#5A6A85]">Disponível</span></div>
+              <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded bg-[#F0F4FA] border border-[#F0F4FA]"></div><span class="text-[11px] text-[#5A6A85]">Indisponível</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Step 3: Motivo da Consulta -->
+      <div class="bg-white rounded-xl border border-[#DDE4F0] shadow-[0_1px_4px_rgba(13,27,62,0.05)]">
+        <div class="flex items-center gap-3 px-6 py-4 border-b border-[#F0F4FA]">
+          <div class="w-6 h-6 rounded-full flex items-center justify-center text-white text-[11px] font-bold bg-[#1565C0] shrink-0">3</div>
+          <span class="text-[13px] font-semibold text-[#0D1B3E]">Motivo da Consulta</span>
+        </div>
+        <div class="p-6">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[12px] font-semibold text-[#0D1B3E]">Descrição (opcional)</label>
+            <textarea [(ngModel)]="motivo" rows="3" maxlength="500" placeholder="Descreva brevemente o motivo do agendamento (opcional)..."
+                      class="w-full px-4 py-3 text-[13px] border border-[#DDE4F0] rounded-lg text-[#0D1B3E] bg-white placeholder:text-[#5A6A85] outline-none focus:border-[#1565C0]/50 focus:ring-2 focus:ring-[#1565C0]/10 transition resize-none leading-relaxed"></textarea>
+            <div class="flex justify-end">
+              <span class="text-[11px] text-[#5A6A85]">{{ motivo.length }}/500</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Summary column -->
+    <div class="w-full lg:w-[340px] shrink-0">
+      <div class="bg-white rounded-xl border border-[#DDE4F0] sticky top-6 shadow-[0_1px_6px_rgba(13,27,62,0.07)]">
+        <div class="px-6 py-4 border-b border-[#F0F4FA]">
+          <div class="flex items-center gap-2">
+            <i class="bi bi-calendar-event text-[#1565C0]"></i>
+            <span class="text-[13px] font-semibold text-[#0D1B3E]">Resumo do Agendamento</span>
+          </div>
+        </div>
+
+        <div class="px-6 py-2">
+          
+          <div class="flex items-center gap-3 py-3 border-b border-[#F0F4FA]">
+            <div class="w-8 h-8 rounded-lg bg-[#EBF3FF] flex items-center justify-center shrink-0">
+              <i class="bi bi-stethoscope text-[#1565C0]"></i>
+            </div>
+            <div>
+              <div class="text-[11px] text-[#5A6A85] font-medium">Especialidade</div>
+              <div class="text-[13px] font-semibold text-[#0D1B3E]">{{ especialidade }}</div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 py-3 border-b border-[#F0F4FA]">
+            <div class="w-8 h-8 rounded-lg bg-[#EBF3FF] flex items-center justify-center shrink-0">
+              <i class="bi bi-person text-[#1565C0]"></i>
+            </div>
+            <div>
+              <div class="text-[11px] text-[#5A6A85] font-medium">Profissional</div>
+              <div class="text-[13px] font-semibold text-[#0D1B3E]">{{ profissional || '—' }}</div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 py-3 border-b border-[#F0F4FA]">
+            <div class="w-8 h-8 rounded-lg bg-[#EBF3FF] flex items-center justify-center shrink-0">
+              <i class="bi bi-calendar text-[#1565C0]"></i>
+            </div>
+            <div>
+              <div class="text-[11px] text-[#5A6A85] font-medium">Data</div>
+              <div class="text-[13px] font-semibold text-[#0D1B3E]">{{ formatSelectedDate() }}</div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 py-3">
+            <div class="w-8 h-8 rounded-lg bg-[#EBF3FF] flex items-center justify-center shrink-0">
+              <i class="bi bi-clock text-[#1565C0]"></i>
+            </div>
+            <div>
+              <div class="text-[11px] text-[#5A6A85] font-medium">Horário</div>
+              <div class="text-[13px] font-semibold text-[#0D1B3E]">{{ selectedTime ?? 'Selecione um horário' }}</div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="px-6 pb-5 pt-2">
+          <!-- Warning -->
+          <div class="flex items-start gap-2.5 p-3.5 rounded-xl bg-[#FEF3C7] border border-[#FDE68A] mb-4">
+            <i class="bi bi-exclamation-triangle-fill text-[#D97706] shrink-0 mt-0.5"></i>
+            <p class="text-[12px] text-[#92400E] leading-relaxed">
+              Cancelamentos devem ser feitos com <strong>24h de antecedência</strong>.
+            </p>
+          </div>
+
+          <!-- CTA -->
+          <button (click)="summaryReady && confirmed = true"
+                  [disabled]="!summaryReady"
+                  class="w-full py-3 rounded-lg text-[14px] font-semibold text-white transition-all"
+                  [ngStyle]="{
+                    'background-color': summaryReady ? '#1565C0' : '#A8C4E8',
+                    'box-shadow': summaryReady ? '0 2px 10px rgba(21,101,192,0.3)' : 'none',
+                    'cursor': summaryReady ? 'pointer' : 'not-allowed'
+                  }">
+            Confirmar Agendamento
+          </button>
+
+          <p *ngIf="!summaryReady" class="text-center text-[11px] text-[#5A6A85] mt-2">
+            Selecione data e horário para continuar
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

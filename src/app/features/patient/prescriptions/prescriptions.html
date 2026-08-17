@@ -1,0 +1,171 @@
+<div class="p-4 sm:p-6">
+
+  <!-- Área Principal -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+
+    <!-- Scrollable content -->
+    <main class="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
+      
+      <!-- Page header -->
+      <div class="flex items-start justify-between gap-4 mb-6 flex-wrap">
+        <div>
+          <h1 class="text-[22px] font-bold text-[#0D1B3E] tracking-tight leading-tight">Minhas Prescrições</h1>
+          <p class="text-[13px] text-[#5A6A85] mt-1">Gerencie seus medicamentos, receitas e validades</p>
+        </div>
+        <button class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#1565C0] text-white text-[13px] font-medium hover:bg-[#0D47A1] transition-colors" style="box-shadow: 0 2px 8px rgba(21,101,192,0.25)">
+          <i class="bi bi-arrow-repeat text-sm"></i> Solicitar Renovação
+        </button>
+      </div>
+
+      <!-- Stat tiles -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div class="bg-white rounded-xl border p-4 flex items-center gap-3 border-[#BBF7D0] shadow-sm">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-[#DCFCE7]">
+            <i class="bi bi-check-circle-fill text-[#15803D] text-lg"></i>
+          </div>
+          <div>
+            <div class="text-[22px] font-bold text-[#0D1B3E]">{{ activeCount }}</div>
+            <div class="text-[11px] text-[#5A6A85] font-medium leading-tight">Prescrições Ativas</div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border p-4 flex items-center gap-3 border-[#FDE68A] shadow-sm">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-[#FEF3C7]">
+            <i class="bi bi-clock text-[#B45309] text-lg"></i>
+          </div>
+          <div>
+            <div class="text-[22px] font-bold text-[#0D1B3E]">{{ renewCount }}</div>
+            <div class="text-[11px] text-[#5A6A85] font-medium leading-tight">Para Renovar</div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border p-4 flex items-center gap-3 border-[#FECACA] shadow-sm">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-[#FEE2E2]">
+            <i class="bi bi-exclamation-triangle-fill text-[#DC2626] text-lg"></i>
+          </div>
+          <div>
+            <div class="text-[22px] font-bold text-[#0D1B3E]">{{ expiredCount }}</div>
+            <div class="text-[11px] text-[#5A6A85] font-medium leading-tight">Expiradas</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs + filter -->
+      <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
+        <div class="flex items-center bg-white border border-[#DDE4F0] rounded-lg p-1 gap-0.5">
+          <button (click)="activeTab = 'Ativas'" [ngClass]="activeTab === 'Ativas' ? 'bg-[#1565C0] text-white shadow-sm' : 'text-[#5A6A85] hover:text-[#0D1B3E] hover:bg-[#F0F4FA]'" class="px-4 py-1.5 rounded-md text-[13px] font-medium transition-all">
+            Ativas
+          </button>
+          <button (click)="activeTab = 'Histórico'" [ngClass]="activeTab === 'Histórico' ? 'bg-[#1565C0] text-white shadow-sm' : 'text-[#5A6A85] hover:text-[#0D1B3E] hover:bg-[#F0F4FA]'" class="px-4 py-1.5 rounded-md text-[13px] font-medium transition-all">
+            Histórico
+          </button>
+        </div>
+
+        <button class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-[#DDE4F0] bg-white text-[13px] text-[#5A6A85] font-medium hover:border-[#1565C0]/30 hover:text-[#1565C0] transition-colors">
+          Ordenar por validade <i class="bi bi-chevron-down"></i>
+        </button>
+      </div>
+
+      <!-- Content -->
+      <div *ngIf="activeTab === 'Ativas'" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div *ngFor="let rx of prescriptions" class="bg-white rounded-xl border flex flex-col overflow-hidden hover:shadow-lg transition-all duration-200" [ngStyle]="{'border-color': rx.status === 'expirada' ? '#FECACA' : '#DDE4F0', 'box-shadow': '0 1px 6px rgba(13,27,62,0.06)'}">
+          
+          <!-- Card header -->
+          <div class="px-5 pt-5 pb-4">
+            <div class="flex items-start justify-between gap-3 mb-4">
+              <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" [ngStyle]="{'background-color': rx.iconBg}">
+                <i [class]="rx.icon + ' text-xl'" [ngStyle]="{'color': rx.iconColor}"></i>
+              </div>
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold" [ngStyle]="{'background-color': getStatusConfig(rx.status).bg, 'color': getStatusConfig(rx.status).text}">
+                <i [class]="getStatusConfig(rx.status).icon"></i> {{ getStatusConfig(rx.status).label }}
+              </span>
+            </div>
+
+            <h3 class="text-[15px] font-semibold text-[#0D1B3E] leading-snug mb-1" [ngStyle]="{'opacity': rx.status === 'expirada' ? 0.6 : 1}">
+              {{ rx.name }}
+            </h3>
+
+            <!-- Dosage -->
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md mb-4 bg-[#F0F4FA]">
+              <span class="text-[12px] font-medium text-[#1565C0]">{{ rx.dosageDetail }}</span>
+              <span class="text-[#DDE4F0]">·</span>
+              <span class="text-[12px] text-[#5A6A85]">{{ rx.frequency }}</span>
+            </div>
+
+            <!-- Instructions -->
+            <p class="text-[12px] text-[#5A6A85] leading-relaxed mb-4">{{ rx.instructions }}</p>
+
+            <!-- Doctor row -->
+            <div class="flex items-center gap-2 mb-3">
+              <div class="w-6 h-6 rounded-full bg-[#EBF3FF] flex items-center justify-center flex-shrink-0">
+                <i class="bi bi-person text-[#1565C0]"></i>
+              </div>
+              <div>
+                <span class="text-[12px] font-medium text-[#0D1B3E]">{{ rx.doctor }}</span>
+                <span class="text-[12px] text-[#5A6A85]"> · {{ rx.specialty }}</span>
+              </div>
+            </div>
+
+            <!-- Validity -->
+            <div class="flex items-center justify-between text-[12px]">
+              <span class="text-[#5A6A85]">Emitida em {{ rx.issued }}</span>
+              <span class="font-medium" [ngStyle]="{'color': rx.status === 'expirada' ? '#DC2626' : (rx.status === 'renovar' ? '#B45309' : '#15803D')}">
+                Válida até {{ rx.validUntil }}
+              </span>
+            </div>
+
+            <!-- Refills -->
+            <div *ngIf="rx.refills > 0" class="mt-3 flex items-center gap-1.5">
+              <div *ngFor="let _ of getRefillsArray(rx.refills); let i = index" class="h-1.5 flex-1 rounded-full" [ngStyle]="{'background-color': i < rx.refills ? '#1565C0' : '#DDE4F0', 'max-width': '32px'}"></div>
+              <span class="text-[11px] text-[#5A6A85] ml-1">{{ rx.refills }} refil(is)</span>
+            </div>
+          </div>
+
+          <!-- Divider -->
+          <div class="border-t border-[#F0F4FA] mx-0"></div>
+
+          <!-- Action bar -->
+          <div class="px-5 py-3 flex items-center gap-2 bg-[#FAFBFD]">
+            <button class="flex-1 inline-flex items-center justify-center gap-1.5 py-2 rounded-lg border border-[#DDE4F0] text-[#5A6A85] text-[12px] font-medium hover:border-[#1565C0]/30 hover:text-[#1565C0] transition-colors">
+              <i class="bi bi-download"></i> Baixar PDF
+            </button>
+            <button class="flex-1 inline-flex items-center justify-center gap-1.5 py-2 rounded-lg text-[12px] font-medium transition-colors" [ngStyle]="{'background-color': rx.status === 'expirada' ? '#F3F4F6' : '#EBF3FF', 'color': rx.status === 'expirada' ? '#6B7280' : '#1565C0'}">
+              <i class="bi bi-eye"></i> Ver Detalhes
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- History Table -->
+      <div *ngIf="activeTab === 'Histórico'" class="bg-white rounded-xl border border-[#DDE4F0] overflow-x-auto" style="box-shadow: 0 1px 4px rgba(13,27,62,0.05)">
+        <table class="w-full text-[13px] min-w-[600px]">
+          <thead>
+            <tr class="border-b border-[#F0F4FA]">
+              <th class="text-left px-5 py-3 text-[11px] font-semibold text-[#5A6A85] uppercase tracking-wider">Medicamento</th>
+              <th class="text-left px-5 py-3 text-[11px] font-semibold text-[#5A6A85] uppercase tracking-wider">Médico</th>
+              <th class="text-left px-5 py-3 text-[11px] font-semibold text-[#5A6A85] uppercase tracking-wider">Emissão</th>
+              <th class="text-left px-5 py-3 text-[11px] font-semibold text-[#5A6A85] uppercase tracking-wider">Expirou em</th>
+              <th class="px-5 py-3"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of historyItems; let last = last" class="hover:bg-[#FAFBFD] transition-colors" [ngClass]="{'border-b border-[#F0F4FA]': !last}">
+              <td class="px-5 py-4 font-medium text-[#0D1B3E]">{{ item.name }}</td>
+              <td class="px-5 py-4 text-[#5A6A85]">{{ item.doctor }}</td>
+              <td class="px-5 py-4 text-[#5A6A85]">{{ item.issued }}</td>
+              <td class="px-5 py-4">
+                <span class="text-[#DC2626] font-medium">{{ item.expired }}</span>
+              </td>
+              <td class="px-5 py-4 text-right">
+                <button class="inline-flex items-center gap-1 text-[12px] text-[#5A6A85] hover:text-[#1565C0] transition-colors">
+                  <i class="bi bi-download"></i> PDF
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+    </main>
+  </div>
+</div>

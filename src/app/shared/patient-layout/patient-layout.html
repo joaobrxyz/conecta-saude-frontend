@@ -1,0 +1,136 @@
+<div class="flex h-screen bg-[#F0F4FA] overflow-hidden" style="font-family: 'Inter', system-ui, sans-serif;">
+  
+  <!-- Overlay do Sidebar (Mobile) -->
+  <div *ngIf="sidebarOpen" class="fixed inset-0 bg-black/30 z-30 lg:hidden" (click)="sidebarOpen = false"></div>
+  
+  <!-- Sidebar -->
+  <aside [ngClass]="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'" 
+         class="fixed lg:static top-0 left-0 h-full z-40 lg:z-auto flex flex-col w-[232px] bg-white border-r border-[rgba(21,101,192,0.09)] shrink-0 transition-transform duration-300">
+    
+    <!-- Logo -->
+    <div class="flex items-center justify-between px-5 h-[60px] border-b border-[rgba(21,101,192,0.07)] shrink-0">
+      <div class="flex items-center gap-2.5">
+        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-[#1565C0]">
+          <i class="bi bi-heart-pulse text-white"></i>
+        </div>
+        <span class="text-[#0D1B3E] font-bold text-[15px] tracking-tight">
+          Conecta<span class="text-[#16A34A]">Saúde</span>
+        </span>
+      </div>
+      <button (click)="sidebarOpen = false" class="lg:hidden text-[#8A9AB8] hover:text-[#0D1B3E] p-1 transition-colors">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <!-- Navegação -->
+    <nav class="flex-1 px-3 py-5 overflow-y-auto space-y-0.5">
+      <p class="text-[10px] font-semibold text-[#C0CADE] uppercase tracking-widest px-2.5 mb-3">Navegação</p>
+      
+      <button *ngFor="let item of navItems" 
+              [routerLink]="item.route"
+              (click)="sidebarOpen = false"
+              [ngClass]="router.url.includes(item.route) ? 'bg-[#EBF3FF] text-[#1565C0]' : 'text-[#5A6A85] hover:bg-[#F5F8FF] hover:text-[#0D1B3E]'"
+              class="w-full flex items-center gap-3 px-2.5 py-2.5 rounded-lg text-[13.5px] font-medium transition-all duration-150 group">
+        <i [class]="'bi ' + item.icon + (router.url.includes(item.route) ? ' text-[#1565C0]' : ' text-[#9AAAC0] group-hover:text-[#5A6A85] transition-colors')"></i>
+        <span class="flex-1 text-left">{{ item.label }}</span>
+        <span *ngIf="item.badge && !router.url.includes(item.route)" class="text-[10px] font-bold bg-[#1565C0] text-white rounded-full px-1.5 py-0.5 min-w-[18px] text-center">
+          {{ item.badge }}
+        </span>
+        <div *ngIf="router.url.includes(item.route)" class="w-1.5 h-1.5 rounded-full bg-[#1565C0]"></div>
+      </button>
+    </nav>
+
+    <!-- Mini-widget da Próxima Consulta -->
+    <div class="mx-3 mb-4 p-4 rounded-xl bg-gradient-to-br from-[#1565C0] to-[#1E88E5]">
+      <div class="flex items-center gap-1.5 mb-2.5">
+        <i class="bi bi-calendar3 text-blue-200"></i>
+        <span class="text-[11px] font-semibold text-blue-200 uppercase tracking-wider">Próxima Consulta</span>
+      </div>
+      <p class="text-white font-bold text-sm leading-snug mb-0.5">Dr. Rafael Silva</p>
+      <p class="text-blue-200 text-[11px]">Cardiologista</p>
+      <div class="flex items-center gap-1.5 mt-2.5 bg-white/15 rounded-lg px-2.5 py-1.5">
+        <i class="bi bi-clock text-blue-200"></i>
+        <span class="text-white text-[11px] font-semibold">Amanhã, 14:30</span>
+      </div>
+    </div>
+
+    <!-- Usuário Sidebar -->
+    <div class="px-4 py-3 border-t border-[rgba(21,101,192,0.07)] flex items-center gap-3">
+      <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#1565C0] to-[#42A5F5] flex items-center justify-center text-white text-sm font-bold shrink-0">
+        {{ userInitials }}
+      </div>
+      <div class="min-w-0 flex-1">
+        <p class="text-[13px] font-semibold text-[#0D1B3E] truncate leading-tight">{{ userName }}</p>
+        <p class="text-[11px] text-[#9AAAC0]">Paciente · Nº {{ patientId }}</p>
+      </div>
+      <i routerLink="/paciente/configuracoes" class="bi bi-gear text-[#C0CADE] shrink-0 hover:text-[#5A6A85] cursor-pointer transition-colors"></i>
+    </div>
+  </aside>
+
+  <!-- Área Principal -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+
+    <!-- TopBar (Fica aqui, dividindo espaço com as páginas) -->
+    <header class="sticky top-0 z-20 bg-white/96 backdrop-blur-sm border-b border-[rgba(21,101,192,0.08)] px-4 sm:px-6 h-[60px] flex items-center gap-4 shrink-0">
+      <button (click)="sidebarOpen = true" class="lg:hidden text-[#8A9AB8] hover:text-[#0D1B3E] transition-colors p-1">
+        <i class="bi bi-list text-lg"></i>
+      </button>
+
+      <!-- Barra de Busca Dinâmica -->
+      <div *ngIf="showSearchBar" class="relative flex-1 max-w-[440px]">
+        <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-[#B8C7DC]"></i>
+        <input 
+          [(ngModel)]="query"
+          [placeholder]="searchPlaceholder"
+          class="w-full pl-9 pr-4 py-2 text-[13px] rounded-lg border border-[#E2EAF4] bg-[#F5F8FF] text-[#0D1B3E] placeholder-[#B8C7DC] outline-none focus:border-[#1565C0] focus:ring-2 focus:ring-[#1565C0]/10 transition-all"
+        />
+      </div>
+
+      <div class="flex items-center gap-1.5 ml-auto">
+        
+        <!-- Notificações -->
+        <div class="relative">
+          <button (click)="notifOpen = !notifOpen" class="relative flex items-center justify-center w-9 h-9 rounded-lg hover:bg-[#F0F4FA] transition-colors text-[#8A9AB8] hover:text-[#5A6A85]">
+            <i class="bi bi-bell text-lg"></i>
+            <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#DC2626] ring-2 ring-white"></span>
+          </button>
+
+          <div *ngIf="notifOpen" class="absolute right-0 top-11 w-[320px] bg-white rounded-xl shadow-2xl border border-[rgba(21,101,192,0.1)] z-50 overflow-hidden">
+            <div class="px-4 py-3 border-b border-[#F3F6FB] flex items-center justify-between">
+              <span class="text-[13px] font-bold text-[#0D1B3E]">Notificações</span>
+              <span (click)="notifOpen = false" class="text-[11px] text-[#1565C0] cursor-pointer font-medium hover:underline underline-offset-2">Limpar todas</span>
+            </div>
+            
+            <div *ngFor="let n of notifications" class="flex items-start gap-3 px-4 py-3 hover:bg-[#F8FAFD] cursor-pointer transition-colors border-b border-[#F8FAFC] last:border-0">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5" [ngStyle]="{'background': n.color + '15', 'color': n.color}">
+                <i [class]="'bi ' + n.icon"></i>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-[12px] text-[#0D1B3E] leading-snug">{{ n.text }}</p>
+                <p class="text-[10px] text-[#B8C7DC] mt-1">{{ n.time }}</p>
+              </div>
+              <div *ngIf="n.dot" class="w-1.5 h-1.5 rounded-full bg-[#1565C0] mt-1.5 shrink-0"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Avatar Topbar -->
+        <div class="flex items-center gap-2.5 pl-2 ml-1 border-l border-[#EDF0F7]">
+          <div class="hidden sm:block text-right">
+            <p class="text-[13px] font-semibold text-[#0D1B3E] leading-none">{{ userName }}</p>
+            <p class="text-[10px] text-[#9AAAC0] leading-none mt-0.5">Paciente</p>
+          </div>
+          <div routerLink="/paciente/configuracoes" class="w-9 h-9 rounded-full bg-gradient-to-br from-[#1565C0] to-[#42A5F5] flex items-center justify-center text-white text-sm font-bold cursor-pointer shadow-sm">
+            {{ userInitials }}
+          </div>
+        </div>
+        
+      </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto">
+      <router-outlet></router-outlet>
+    </main>
+    
+  </div>
+</div>

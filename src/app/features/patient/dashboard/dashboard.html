@@ -1,0 +1,377 @@
+<div class="p-4 sm:p-6">
+
+  <!-- Área Principal -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+
+    <!-- Conteúdo do Dashboard -->
+    <main class="flex-1 overflow-y-auto">
+      <div class="px-4 sm:px-6 lg:px-8 py-6 space-y-6 max-w-[1280px] mx-auto">
+
+        <!-- Welcome -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 class="text-2xl sm:text-[1.75rem] font-bold text-[#0D1B3E] tracking-tight leading-tight">
+              {{ greeting }}, João! 👋
+            </h1>
+            <p class="text-[13px] text-[#5A6A85] mt-1">{{ dateStr }}</p>
+          </div>
+          <div class="flex items-center gap-2 text-[12px] text-[#5A6A85] bg-white border border-[#E2EAF4] rounded-lg px-3.5 py-2 shadow-sm">
+            <i class="bi bi-patch-check-fill text-[#16A34A]"></i>
+            Cartão SUS: <span class="font-semibold text-[#0D1B3E] ml-1">700 0082 4839 8521</span>
+          </div>
+        </div>
+
+        <!-- Quick actions -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <button class="sm:col-span-1 flex items-center gap-4 p-5 rounded-xl text-left hover:scale-[1.01] active:scale-[0.99] transition-all duration-150"
+                  style="background: linear-gradient(135deg, #0D47A1 0%, #1565C0 50%, #1976D2 100%); box-shadow: 0 8px 24px rgba(21,101,192,0.38);">
+            <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+              <i class="bi bi-calendar-check text-white text-xl"></i>
+            </div>
+            <div routerLink="/paciente/agendar" class="flex-1">
+              <p class="text-white font-bold text-[15px] leading-tight">Agendar Nova Consulta</p>
+              <p class="text-blue-200 text-[12px] mt-1">Disponível ainda hoje</p>
+            </div>
+            <i class="bi bi-plus-lg text-white/70 shrink-0 text-xl"></i>
+          </button>
+
+          <button class="flex items-center gap-4 p-5 rounded-xl text-left hover:scale-[1.01] active:scale-[0.99] transition-all duration-150"
+                  style="background: linear-gradient(135deg, #14532D 0%, #16A34A 100%); box-shadow: 0 6px 18px rgba(22,163,74,0.32);">
+            <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+              <i class="bi bi-zoom-in text-white text-xl"></i>
+            </div>
+            <div class="flex-1">
+              <p class="text-white font-bold text-[15px] leading-tight">Resultados de Exames</p>
+              <p class="text-emerald-200 text-[12px] mt-1">3 novos resultados</p>
+            </div>
+            <i class="bi bi-arrow-up-right text-white/60 shrink-0"></i>
+          </button>
+
+          <button class="flex items-center gap-4 p-5 rounded-xl text-left hover:scale-[1.01] active:scale-[0.99] transition-all duration-150"
+                  style="background: linear-gradient(135deg, #5B21B6 0%, #7C3AED 100%); box-shadow: 0 6px 18px rgba(124,58,237,0.32);">
+            <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+              <i class="bi bi-capsule text-white text-xl"></i>
+            </div>
+            <div class="flex-1">
+              <p class="text-white font-bold text-[15px] leading-tight">Minhas Receitas</p>
+              <p class="text-violet-200 text-[12px] mt-1">3 receitas ativas</p>
+            </div>
+            <i class="bi bi-arrow-up-right text-white/60 shrink-0"></i>
+          </button>
+        </div>
+
+        <!-- Main grid -->
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          
+          <!-- Coluna Esquerda -->
+          <div class="xl:col-span-2 space-y-6">
+            
+            <!-- Consulta em Destaque -->
+            <div class="bg-white rounded-xl border border-[rgba(21,101,192,0.1)] shadow-sm overflow-hidden">
+              <div class="px-5 py-4 border-b border-[#F3F6FB] flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <div class="w-1 h-5 rounded-full bg-[#1565C0]"></div>
+                  <div>
+                    <p class="text-[11px] font-semibold text-[#9AAAC0] uppercase tracking-widest">Próxima Consulta</p>
+                    <h2 class="text-[15px] font-bold text-[#0D1B3E] leading-tight mt-0.5">Consulta Agendada</h2>
+                  </div>
+                </div>
+                
+                <span class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-full border text-[#16A34A] bg-[#F0FDF4] border-[rgba(22,163,74,0.2)]">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#16A34A]"></span> Confirmada
+                </span>
+              </div>
+
+              <div class="px-5 py-5">
+                <div class="flex flex-col sm:flex-row gap-5">
+                  <div class="flex items-start gap-4 flex-1">
+                    <div class="relative shrink-0">
+                      <div class="w-[60px] h-[60px] rounded-2xl bg-gradient-to-br from-[#1565C0] to-[#42A5F5] flex items-center justify-center text-white text-xl font-bold shadow">R</div>
+                      <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#16A34A] border-2 border-white flex items-center justify-center">
+                        <i class="bi bi-check-circle-fill text-white text-[10px]"></i>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 class="text-[17px] font-bold text-[#0D1B3E] leading-tight">Dr. Rafael Silva</h3>
+                      <p class="text-[13px] text-[#5A6A85]">Cardiologista · CRM 12.045</p>
+                      <div class="flex items-center gap-1 mt-1.5">
+                        <i class="bi bi-star-fill text-[#F59E0B] text-[10px]" *ngFor="let s of [1,2,3,4,5]"></i>
+                        <span class="text-[11px] text-[#B8C7DC] ml-1">4.9 · 214 avaliações</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="space-y-2 sm:min-w-[200px]">
+                    <div class="flex items-center gap-2 text-[13px] text-[#5A6A85]"><i class="bi bi-clock text-[#1565C0]"></i> Amanhã, 14:30</div>
+                    <div class="flex items-center gap-2 text-[13px] text-[#5A6A85]"><i class="bi bi-geo-alt text-[#1565C0]"></i> Unidade Centro — Sala 302</div>
+                    <div class="flex items-center gap-2 text-[13px] text-[#5A6A85]"><i class="bi bi-clipboard-data text-[#1565C0]"></i> Retorno — Avaliação Cardíaca</div>
+                    <div class="flex items-center gap-2 text-[13px] text-[#5A6A85]"><i class="bi bi-telephone text-[#1565C0]"></i> (11) 3399-2200 · Ramal 302</div>
+                  </div>
+                </div>
+
+                <div class="mt-4 p-3.5 rounded-xl bg-[#F5F8FF] border border-[rgba(21,101,192,0.08)]">
+                  <p class="text-[11px] font-bold text-[#5A6A85] uppercase tracking-widest mb-2">Orientações de preparo</p>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                    <div *ngFor="let item of prepTips" class="flex items-start gap-2 text-[12px] text-[#5A6A85]">
+                      <i class="bi bi-check-circle-fill text-[#16A34A] shrink-0 mt-0.5 text-xs"></i> {{ item }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-2.5 mt-4">
+                  <button class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#1565C0] text-white text-[13px] font-semibold hover:bg-[#1248A0] transition-colors shadow-md shadow-blue-200/50">
+                    <i class="bi bi-camera-video"></i> Entrar por Videochamada
+                  </button>
+                  <button (click)="rescheduleModal = true" class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-[rgba(21,101,192,0.2)] text-[13px] font-medium text-[#1565C0] hover:bg-[#EBF3FF] transition-colors">
+                    <i class="bi bi-arrow-repeat"></i> Reagendar
+                  </button>
+                  <button (click)="cancelModal = true" class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-[rgba(220,38,38,0.15)] text-[13px] font-medium text-[#DC2626] hover:bg-[#FEF2F2] transition-colors">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Lista de Próximas Consultas -->
+            <div class="bg-white rounded-xl border border-[rgba(21,101,192,0.1)] shadow-sm overflow-hidden">
+              <div class="px-5 py-4 border-b border-[#F3F6FB] flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <div class="w-1 h-5 rounded-full bg-[#7C3AED]"></div>
+                  <div>
+                    <p class="text-[11px] font-semibold text-[#9AAAC0] uppercase tracking-widest">Agenda</p>
+                    <h2 class="text-[15px] font-bold text-[#0D1B3E] mt-0.5">Próximas Consultas</h2>
+                  </div>
+                </div>
+                <button class="flex items-center gap-1.5 text-[12px] text-[#1565C0] font-semibold hover:underline underline-offset-2">
+                  Ver todas <i class="bi bi-chevron-right text-xs"></i>
+                </button>
+              </div>
+
+              <div class="divide-y divide-[#F3F6FB]">
+                <div *ngFor="let appt of upcoming; let idx = index" class="flex items-center gap-4 px-5 py-4 hover:bg-[#FAFCFF] transition-colors group">
+                  
+                  <div [ngClass]="getAvatarGradient(idx)" class="w-12 h-12 rounded-xl bg-gradient-to-br flex items-center justify-center text-white text-base font-bold shadow-sm shrink-0">
+                    {{ appt.avatar }}
+                  </div>
+
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-start justify-between gap-2">
+                      <div>
+                        <p class="text-[13.5px] font-semibold text-[#0D1B3E]">{{ appt.doctor }}</p>
+                        <p class="text-[12px] text-[#5A6A85]">{{ appt.specialty }}</p>
+                      </div>
+                      
+                      <span [ngClass]="getStatusConfig(appt.status).cls" class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-full border">
+                        <span [ngClass]="getStatusConfig(appt.status).dot" class="w-1.5 h-1.5 rounded-full"></span>
+                        {{ getStatusConfig(appt.status).label }}
+                      </span>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-3 mt-2">
+                      <span class="flex items-center gap-1 text-[11px] text-[#8A9AB8]"><i class="bi bi-calendar text-[#1565C0]"></i>{{ appt.date }}, {{ appt.time }}</span>
+                      <span class="flex items-center gap-1 text-[11px] text-[#8A9AB8]"><i class="bi bi-geo-alt text-[#1565C0]"></i>{{ appt.location }}</span>
+                    </div>
+                  </div>
+                  <i class="bi bi-chevron-right text-[#D0DCEE] group-hover:text-[#1565C0] transition-colors shrink-0"></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- Especialidades Agendamento Rápido -->
+            <div class="bg-white rounded-xl border border-[rgba(21,101,192,0.1)] shadow-sm overflow-hidden">
+              <div class="px-5 py-4 border-b border-[#F3F6FB] flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <div class="w-1 h-5 rounded-full bg-[#16A34A]"></div>
+                  <div>
+                    <p class="text-[11px] font-semibold text-[#9AAAC0] uppercase tracking-widest">Agendamento Rápido</p>
+                    <h2 class="text-[15px] font-bold text-[#0D1B3E] mt-0.5">Especialidades Disponíveis</h2>
+                  </div>
+                </div>
+                <button class="flex items-center gap-1.5 text-[12px] text-[#1565C0] font-semibold hover:underline underline-offset-2">
+                  Ver todas <i class="bi bi-chevron-right text-xs"></i>
+                </button>
+              </div>
+              <div class="p-5 grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <button *ngFor="let s of specialties" class="flex flex-col items-start p-4 rounded-xl border border-[#EDF2FA] hover:border-[rgba(21,101,192,0.25)] hover:shadow-sm hover:bg-[#FAFCFF] transition-all duration-150 text-left group">
+                  <div class="w-9 h-9 rounded-lg flex items-center justify-center mb-3 transition-colors text-base" [ngStyle]="{'background': s.bg, 'color': s.color}">
+                    <i [class]="'bi ' + s.icon"></i>
+                  </div>
+                  <p class="text-[13px] font-semibold text-[#0D1B3E] leading-tight">{{ s.label }}</p>
+                  <div class="flex items-center gap-1 mt-1">
+                    <div class="w-1.5 h-1.5 rounded-full bg-[#16A34A]"></div>
+                    <p class="text-[11px] text-[#16A34A] font-medium">{{ s.available }}</p>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Coluna Direita -->
+          <div class="space-y-5">
+
+            <!-- Histórico Clínico -->
+            <div class="bg-white rounded-xl border border-[rgba(21,101,192,0.1)] shadow-sm overflow-hidden">
+              <div class="px-5 py-4 border-b border-[#F3F6FB] flex items-center justify-between">
+                <div>
+                  <p class="text-[11px] font-semibold text-[#9AAAC0] uppercase tracking-widest">Histórico</p>
+                  <h2 class="text-[14px] font-bold text-[#0D1B3E] mt-0.5">Histórico Clínico</h2>
+                </div>
+                <button class="text-[11px] text-[#1565C0] font-semibold hover:underline underline-offset-2">Ver tudo</button>
+              </div>
+              <div class="divide-y divide-[#F3F6FB]">
+                <div *ngFor="let r of clinicalHistory" class="flex items-start gap-3 px-4 py-3.5 hover:bg-[#FAFCFF] transition-colors group cursor-pointer">
+                  
+                  <div [ngClass]="(r.status === 'available' || r.status === 'download') ? 'bg-[#EBF3FF]' : 'bg-[#F3F6FB]'" class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+                    <i *ngIf="r.status === 'download'" class="bi bi-download text-[#1565C0]"></i>
+                    <i *ngIf="r.status === 'available'" class="bi bi-file-earmark-text text-[#1565C0]"></i>
+                    <i *ngIf="r.status !== 'download' && r.status !== 'available'" class="bi bi-check-circle-fill text-[#16A34A]"></i>
+                  </div>
+
+                  <div class="flex-1 min-w-0">
+                    <p class="text-[12.5px] font-semibold text-[#0D1B3E] leading-snug truncate">{{ r.name }}</p>
+                    <p class="text-[11px] text-[#9AAAC0] mt-0.5">{{ r.category }} · {{ r.date }}</p>
+                    <button class="text-[11px] font-semibold text-[#1565C0] mt-1 flex items-center gap-1 hover:underline underline-offset-2">
+                      {{ r.action }} <i [class]="r.actionIcon === 'download' ? 'bi bi-download text-[10px]' : 'bi bi-chevron-right text-[10px]'"></i>
+                    </button>
+                  </div>
+                  
+                  <span [ngClass]="getStatusConfig(r.status === 'download' ? 'available' : r.status).cls" class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-full border">
+                    <span [ngClass]="getStatusConfig(r.status === 'download' ? 'available' : r.status).dot" class="w-1.5 h-1.5 rounded-full"></span>
+                    {{ getStatusConfig(r.status === 'download' ? 'available' : r.status).label }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Prescrições Ativas -->
+            <div class="bg-white rounded-xl border border-[rgba(21,101,192,0.1)] shadow-sm overflow-hidden">
+              <div class="px-5 py-4 border-b border-[#F3F6FB] flex items-center justify-between">
+                <div>
+                  <p class="text-[11px] font-semibold text-[#9AAAC0] uppercase tracking-widest">Medicamentos</p>
+                  <h2 class="text-[14px] font-bold text-[#0D1B3E] mt-0.5">Prescrições Ativas</h2>
+                </div>
+                <span class="text-[11px] font-bold text-[#7C3AED] bg-[#F5F3FF] px-2 py-0.5 rounded-full border border-[rgba(124,58,237,0.15)]">
+                  {{ prescriptions.length }} ativas
+                </span>
+              </div>
+              <div class="divide-y divide-[#F3F6FB]">
+                <div *ngFor="let p of prescriptions" class="flex items-center gap-3 px-4 py-3.5">
+                  <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" [ngStyle]="{'background': p.color + '12', 'color': p.color}">
+                    <i class="bi bi-capsule"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-[13px] font-semibold text-[#0D1B3E] truncate">{{ p.name }}</p>
+                    <p class="text-[11px] text-[#9AAAC0]">{{ p.dose }} · {{ p.doctor }}</p>
+                    <p class="text-[10px] text-[#C0CADE] mt-0.5">{{ p.valid }}</p>
+                  </div>
+                  <button class="shrink-0 p-1.5 rounded-lg hover:bg-[#F0F4FA] transition-colors text-[#9AAAC0] hover:text-[#5A6A85]">
+                    <i class="bi bi-download"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Exames Pendentes -->
+            <div class="bg-white rounded-xl border border-[rgba(21,101,192,0.1)] shadow-sm overflow-hidden">
+              <div class="px-5 py-4 border-b border-[#F3F6FB] flex items-center justify-between">
+                <div>
+                  <p class="text-[11px] font-semibold text-[#9AAAC0] uppercase tracking-widest">Solicitados</p>
+                  <h2 class="text-[14px] font-bold text-[#0D1B3E] mt-0.5">Exames Pendentes</h2>
+                </div>
+                <span class="text-[11px] font-bold text-[#DC2626] bg-[#FEF2F2] px-2 py-0.5 rounded-full border border-[rgba(220,38,38,0.15)]">
+                  {{ pendingExams.length }} pendentes
+                </span>
+              </div>
+              <div class="divide-y divide-[#F3F6FB]">
+                <div *ngFor="let e of pendingExams" class="flex items-center gap-3 px-4 py-3.5 hover:bg-[#FAFCFF] transition-colors cursor-pointer group">
+                  <div [ngClass]="e.urgent ? 'bg-[#FEF2F2]' : 'bg-[#EBF3FF]'" class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0">
+                    <i class="bi bi-zoom-in" [ngClass]="e.urgent ? 'text-[#DC2626]' : 'text-[#1565C0]'"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-1.5">
+                      <p class="text-[13px] font-semibold text-[#0D1B3E]">{{ e.name }}</p>
+                      <span *ngIf="e.urgent" class="text-[9px] font-bold text-[#DC2626] bg-[#FEF2F2] border border-[rgba(220,38,38,0.2)] px-1.5 py-0.5 rounded-full uppercase tracking-wide">Urgente</span>
+                    </div>
+                    <p class="text-[11px] text-[#9AAAC0]">Solicitado por {{ e.ordered }} · {{ e.date }}</p>
+                  </div>
+                  <button class="text-[11px] font-semibold text-[#1565C0] bg-[#EBF3FF] hover:bg-[#D6E8FF] px-2.5 py-1 rounded-lg transition-colors shrink-0">
+                    Agendar
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Cancelamento -->
+  <div *ngIf="cancelModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 border border-[rgba(220,38,38,0.1)]">
+      <div class="flex items-start gap-4 mb-5">
+        <div class="w-11 h-11 rounded-xl bg-[#FEF2F2] flex items-center justify-center shrink-0">
+          <i class="bi bi-x-circle text-[#DC2626] text-xl"></i>
+        </div>
+        <div>
+          <h3 class="text-[16px] font-bold text-[#0D1B3E]">Cancelar Consulta</h3>
+          <p class="text-[13px] text-[#5A6A85] mt-1">Tem certeza que deseja cancelar sua consulta com <strong>Dr. Rafael Silva</strong> amanhã às 14:30?</p>
+        </div>
+      </div>
+      <div class="p-3.5 rounded-xl bg-[#FFF8F0] border border-[rgba(217,119,6,0.2)] mb-5">
+        <div class="flex items-center gap-2 text-[12px] text-[#D97706]">
+          <i class="bi bi-exclamation-circle shrink-0"></i>
+          <span>Cancelamentos com menos de 24h de antecedência podem gerar cobrança de taxa.</span>
+        </div>
+      </div>
+      <div class="flex gap-3">
+        <button (click)="cancelModal = false" class="flex-1 py-2.5 rounded-lg border border-[#E2EAF4] text-[13px] font-medium text-[#5A6A85] hover:bg-[#F5F8FF] transition-colors">Voltar</button>
+        <button (click)="cancelModal = false" class="flex-1 py-2.5 rounded-lg bg-[#DC2626] text-white text-[13px] font-semibold hover:bg-[#B91C1C] transition-colors shadow-md shadow-red-200">Confirmar Cancelamento</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Reagendamento -->
+  <div *ngIf="rescheduleModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+      <div class="flex items-center justify-between mb-5">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-[#EBF3FF] flex items-center justify-center">
+            <i class="bi bi-arrow-repeat text-[#1565C0] text-lg"></i>
+          </div>
+          <div>
+            <h3 class="text-[15px] font-bold text-[#0D1B3E]">Reagendar Consulta</h3>
+            <p class="text-[12px] text-[#9AAAC0]">Dr. Rafael Silva · Cardiologista</p>
+          </div>
+        </div>
+        <button (click)="rescheduleModal = false" class="text-[#B8C7DC] hover:text-[#5A6A85] transition-colors p-1">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 mb-5">
+        <div>
+          <label class="block text-[12px] font-semibold text-[#5A6A85] mb-1.5">Selecione uma nova data</label>
+          <div class="relative">
+            <i class="bi bi-calendar absolute left-3 top-1/2 -translate-y-1/2 text-[#B8C7DC]"></i>
+            <input type="date" class="w-full pl-9 pr-4 py-2.5 text-[13px] rounded-lg border border-[#E2EAF4] bg-[#F5F8FF] text-[#0D1B3E] outline-none focus:border-[#1565C0] focus:ring-2 focus:ring-[#1565C0]/10" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-[12px] font-semibold text-[#5A6A85] mb-1.5">Selecione um horário</label>
+          <div class="grid grid-cols-4 gap-2">
+            <button *ngFor="let t of timeSlots" class="py-2 rounded-lg border border-[#E2EAF4] text-[12px] font-medium text-[#5A6A85] hover:border-[#1565C0] hover:text-[#1565C0] hover:bg-[#EBF3FF] transition-colors">
+              {{ t }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex gap-3">
+        <button (click)="rescheduleModal = false" class="flex-1 py-2.5 rounded-lg border border-[#E2EAF4] text-[13px] font-medium text-[#5A6A85] hover:bg-[#F5F8FF] transition-colors">Cancelar</button>
+        <button (click)="rescheduleModal = false" class="flex-1 py-2.5 rounded-lg bg-[#1565C0] text-white text-[13px] font-semibold hover:bg-[#1248A0] transition-colors shadow-md shadow-blue-200">Confirmar Reagendamento</button>
+      </div>
+    </div>
+  </div>
+</div>

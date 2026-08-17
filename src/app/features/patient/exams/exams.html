@@ -1,0 +1,135 @@
+<div class="p-4 sm:p-6">
+
+  <!-- Área Principal -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+
+    <!-- Page content -->
+    <main class="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
+      
+      <!-- Page header -->
+      <div class="flex items-start justify-between gap-4 mb-6 flex-wrap">
+        <div>
+          <h1 class="text-2xl font-bold text-[#0D1B3E] tracking-tight">Meus Exames</h1>
+          <p class="text-sm text-[#5A6A85] mt-1">Acompanhe seus resultados e solicitações pendentes</p>
+        </div>
+        <button class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#1565C0] text-white text-sm font-medium hover:bg-[#0D47A1] transition-colors shadow-sm" style="box-shadow: 0 2px 8px rgba(21,101,192,0.25)">
+          <i class="bi bi-plus-lg"></i> Agendar Novo Exame
+        </button>
+      </div>
+
+      <!-- Stats row -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div class="bg-white rounded-xl border p-4 flex items-center gap-3 border-[#BBF7D0] shadow-sm">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-[#DCFCE7]">
+            <i class="bi bi-check-circle-fill text-[#15803D] text-lg"></i>
+          </div>
+          <div>
+            <div class="text-2xl font-bold text-[#0D1B3E]">{{ counts.disponivel }}</div>
+            <div class="text-xs text-[#5A6A85] font-medium">Disponíveis</div>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-xl border p-4 flex items-center gap-3 border-[#FDE68A] shadow-sm">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-[#FEF3C7]">
+            <i class="bi bi-clock text-[#B45309] text-lg"></i>
+          </div>
+          <div>
+            <div class="text-2xl font-bold text-[#0D1B3E]">{{ counts.pendente }}</div>
+            <div class="text-xs text-[#5A6A85] font-medium">Pendentes</div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border p-4 flex items-center gap-3 border-[#E5E7EB] shadow-sm">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-[#F3F4F6]">
+            <i class="bi bi-exclamation-circle text-[#6B7280] text-lg"></i>
+          </div>
+          <div>
+            <div class="text-2xl font-bold text-[#0D1B3E]">{{ counts.concluido }}</div>
+            <div class="text-xs text-[#5A6A85] font-medium">Concluídos</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs + filter -->
+      <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+        <div class="flex items-center bg-white border border-[#DDE4F0] rounded-lg p-1 gap-0.5 overflow-x-auto">
+          <button *ngFor="let tab of tabs" (click)="activeTab = tab"
+                  [ngClass]="activeTab === tab ? 'bg-[#1565C0] text-white shadow-sm' : 'text-[#5A6A85] hover:text-[#0D1B3E] hover:bg-[#F0F4FA]'"
+                  class="px-3.5 py-1.5 rounded-md text-sm font-medium transition-all whitespace-nowrap">
+            {{ tab }}
+          </button>
+        </div>
+
+        <button class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg border border-[#DDE4F0] bg-white text-sm text-[#5A6A85] font-medium hover:border-[#1565C0]/30 hover:text-[#1565C0] transition-colors">
+          <i class="bi bi-funnel"></i> Filtrar
+        </button>
+      </div>
+
+      <!-- Exam cards -->
+      <div class="space-y-3">
+        <!-- Empty State -->
+        <div *ngIf="filteredExams.length === 0" class="bg-white rounded-xl border border-[#DDE4F0] p-12 flex flex-col items-center justify-center gap-3">
+          <i class="bi bi-x-circle text-[#DDE4F0] text-4xl"></i>
+          <p class="text-sm text-[#5A6A85]">Nenhum exame encontrado</p>
+        </div>
+
+        <!-- Cards -->
+        <div *ngFor="let exam of filteredExams" class="bg-white rounded-xl border border-[#DDE4F0] p-5 flex items-start gap-4 hover:shadow-md hover:border-[#1565C0]/20 transition-all duration-200 group">
+          <div class="flex-shrink-0 w-11 h-11 rounded-lg flex items-center justify-center mt-0.5 text-lg" [ngStyle]="{'background-color': exam.iconBg, 'color': exam.iconColor}">
+            <i [class]="exam.icon"></i>
+          </div>
+
+          <div class="flex-1 min-w-0">
+            <div class="flex items-start justify-between gap-3 flex-wrap">
+              <div>
+                <h3 class="text-[15px] font-semibold text-[#0D1B3E] leading-tight">{{ exam.title }}</h3>
+                <p class="text-[12px] text-[#5A6A85] mt-0.5">{{ exam.subtitle }}</p>
+              </div>
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium" [ngStyle]="{'background-color': getStatusConfig(exam.status).bg, 'color': getStatusConfig(exam.status).text}">
+                <i [class]="getStatusConfig(exam.status).icon + ' text-[10px]'"></i>
+                {{ getStatusConfig(exam.status).label }}
+              </span>
+            </div>
+
+            <div class="mt-3 flex items-center gap-4 flex-wrap">
+              <span class="text-[12px] text-[#5A6A85] flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#5A6A85]/40 inline-block"></span> {{ exam.doctor }}
+              </span>
+              <span class="text-[12px] text-[#5A6A85] flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#5A6A85]/40 inline-block"></span> {{ exam.date }}
+              </span>
+              <span *ngIf="exam.lab" class="text-[12px] text-[#5A6A85] flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#5A6A85]/40 inline-block"></span> {{ exam.lab }}
+              </span>
+            </div>
+
+            <div class="mt-4 flex items-center gap-2 flex-wrap">
+              <div *ngIf="exam.status === 'disponivel'" class="flex gap-2">
+                <button class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#1565C0] text-white text-xs font-medium hover:bg-[#0D47A1] transition-colors">
+                  <i class="bi bi-eye"></i> Ver Resultado
+                </button>
+                <button class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-[#DDE4F0] text-[#5A6A85] text-xs font-medium hover:border-[#1565C0]/30 hover:text-[#1565C0] transition-colors">
+                  <i class="bi bi-download"></i> Baixar PDF
+                </button>
+              </div>
+              
+              <button *ngIf="exam.status === 'pendente'" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-[#1565C0] text-[#1565C0] text-xs font-medium hover:bg-[#EBF3FF] transition-colors">
+                <i class="bi bi-calendar-event"></i> Agendar Agora
+              </button>
+              
+              <div *ngIf="exam.status === 'concluido'" class="flex gap-2">
+                <button class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-[#DDE4F0] text-[#5A6A85] text-xs font-medium hover:border-[#5A6A85]/40 transition-colors">
+                  <i class="bi bi-eye"></i> Ver Resultado
+                </button>
+                <button class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-[#DDE4F0] text-[#5A6A85] text-xs font-medium hover:border-[#5A6A85]/40 transition-colors">
+                  <i class="bi bi-download"></i> Baixar PDF
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
