@@ -106,17 +106,18 @@
           </div>
         </div>
 
+        <p *ngIf="errorMessage" role="alert" class="text-red-700 bg-red-50 p-3 rounded-lg mb-4">{{ errorMessage }}</p>
         <form (ngSubmit)="onSubmit()" class="space-y-4">
           <div>
             <label class="block text-sm font-medium text-[#0D1B3E] mb-1.5">
-              {{ selectedRole === 'paciente' ? 'E-mail ou CPF' : 'E-mail institucional' }}
+              E-mail
             </label>
             <div class="relative">
               <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8A9AB8] pointer-events-none">
                 <i class="bi bi-envelope"></i>
               </span>
-              <input type="text" [(ngModel)]="email" name="email"
-                     [placeholder]="selectedRole === 'paciente' ? 'seu@email.com ou 000.000.000-00' : 'seu@hospital.com.br'"
+              <input type="email" autocomplete="username" [(ngModel)]="email" name="email"
+                     placeholder="seu@email.com"
                      class="w-full pl-10 pr-4 py-3 rounded-xl border border-[#D0DCF0] bg-[#F5F8FF] text-[#0D1B3E] placeholder-[#B0BED4] outline-none transition-all duration-200 focus:border-[#1565C0] focus:bg-white focus:ring-2 focus:ring-[#1565C0]/15 text-sm" required />
             </div>
           </div>
@@ -136,8 +137,9 @@
             </div>
           </div>
 
+          <label class="flex gap-2 text-sm"><input type="checkbox" name="remember" [(ngModel)]="remember"> Manter conectado</label>
           <div class="flex justify-end -mt-1">
-            <a href="#" class="text-sm text-[#1565C0] hover:text-[#0D47A1] font-medium transition-colors hover:underline underline-offset-2">Esqueceu a senha?</a>
+            <a routerLink="/recuperar-senha" class="text-sm text-[#1565C0] hover:text-[#0D47A1] font-medium transition-colors hover:underline underline-offset-2">Esqueceu a senha?</a>
           </div>
 
           <button type="submit" [disabled]="isLoading" class="w-full py-3.5 rounded-xl font-semibold text-white text-sm tracking-wide transition-all duration-200 mt-1 relative overflow-hidden shadow-md"
@@ -162,7 +164,7 @@
         <div *ngIf="selectedRole === 'paciente'" class="text-center">
           <p class="text-sm text-[#5A6A85]">
             Não tem conta? 
-            <a href="#" class="text-[#16A34A] font-semibold hover:text-[#15803D] transition-colors hover:underline underline-offset-2">
+            <a routerLink="/cadastro" class="text-[#16A34A] font-semibold hover:text-[#15803D] transition-colors hover:underline underline-offset-2">
               Cadastre-se aqui
             </a>
           </p>

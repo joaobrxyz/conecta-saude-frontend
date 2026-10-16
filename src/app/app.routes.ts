@@ -1,5 +1,8 @@
+import { authGuard, childAuthGuard } from './core/auth.guard';
+import { AccountPage } from './features/auth/account-page';
+import { AppointmentsPage } from './shared/appointments-page';
 import { Routes } from '@angular/router';
-import { Login } from './features/auth/login/login'; 
+import { Login } from './features/auth/login/login';
 import { Dashboard } from './features/patient/dashboard/dashboard';
 import { Appointments } from './features/patient/appointments/appointments';
 import { Exams } from './features/patient/exams/exams';
@@ -16,7 +19,7 @@ import { Queue as DoctorQueueComponent } from './features/doctor/queue/queue';
 import { Settings as DoctorSettingsComponent } from './features/doctor/settings/settings';
 import { ReceptionLayout } from './shared/reception-layout/reception-layout';
 import { Dashboard as ReceptionDashboardComponent } from './features/reception/dashboard/dashboard';
-import { Agenda as ReceptionAgendaComponent } from './features/reception/agenda/agenda'; 
+import { Agenda as ReceptionAgendaComponent } from './features/reception/agenda/agenda';
 import { Patients as ReceptionPatientsComponent } from './features/reception/patients/patients';
 import { Settings as ReceptionSettingsComponent } from './features/reception/settings/settings';
 import { AdminLayout } from './shared/admin-layout/admin-layout';
@@ -27,11 +30,15 @@ import { Settings as AdminSettingsComponent } from './features/admin/settings/se
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: Login },
-  
-  { 
-    path: 'paciente', 
-    component: PatientLayout, 
+  { path: 'cadastro', component: AccountPage, data: { mode: 'register' } },
+  { path: 'recuperar-senha', component: AccountPage, data: { mode: 'forgot' } },
+  { path: 'redefinir-senha', component: AccountPage, data: { mode: 'reset' } },
+
+  {
+    path: 'paciente', canActivate: [authGuard], canActivateChild: [childAuthGuard], data: { role: 'PACIENTE' },
+    component: PatientLayout,
     children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: Dashboard },
       { path: 'consultas', component: Appointments },
       { path: 'agendar', component: AppointmentCreate },
@@ -41,10 +48,11 @@ export const routes: Routes = [
       { path: 'configuracoes', component: Settings }
     ]
   },
-  { 
-    path: 'medico', 
-    component: DoctorLayout, 
+  {
+    path: 'medico', canActivate: [authGuard], canActivateChild: [childAuthGuard], data: { role: 'MEDICO' },
+    component: DoctorLayout,
     children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DoctorDashboardComponent },
       { path: 'agenda', component: Schedule },
       { path: 'pacientes', component: DoctorPatientsComponent },
@@ -52,23 +60,27 @@ export const routes: Routes = [
       { path: 'configuracoes', component: DoctorSettingsComponent }
     ]
   },
-  { 
-    path: 'recepcao', 
-    component: ReceptionLayout, 
+  {
+    path: 'recepcao', canActivate: [authGuard], canActivateChild: [childAuthGuard], data: { role: 'RECEPCAO' },
+    component: ReceptionLayout,
     children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: ReceptionDashboardComponent },
       { path: 'agenda', component: ReceptionAgendaComponent },
       { path: 'pacientes', component: ReceptionPatientsComponent },
       { path: 'configuracoes', component: ReceptionSettingsComponent }
     ]
   },
-  { 
-    path: 'admin', 
-    component: AdminLayout, 
+  {
+    path: 'admin', canActivate: [authGuard], canActivateChild: [childAuthGuard], data: { role: 'ADMIN' },
+    component: AdminLayout,
     children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: AdminDashboardComponent },
       { path: 'usuarios', component: AdminUsersComponent },
+      { path: 'agenda', component: AppointmentsPage },
       { path: 'configuracoes', component: AdminSettingsComponent }
     ]
   }
+  ,{ path: '**', redirectTo: 'login' }
 ];

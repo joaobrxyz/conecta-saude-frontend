@@ -1,3 +1,4 @@
+import { portalTestProviders } from '../../core/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AdminLayout } from './admin-layout';
@@ -8,6 +9,7 @@ describe('AdminLayout', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      providers: portalTestProviders('ADMIN'),
       imports: [AdminLayout]
     })
     .compileComponents();

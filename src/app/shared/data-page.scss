@@ -1,0 +1,28 @@
+:host { display: block; color: #0d1b3e; }
+.page { padding: 28px; max-width: 1400px; margin: auto; }
+h1 { font-size: 25px; font-weight: 700; margin-bottom: 6px; }
+h2 { font-size: 18px; font-weight: 650; margin-bottom: 16px; }
+.muted { color: #5a6a85; }
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 20px 0; }
+.card { background: white; border: 1px solid #dde4f0; border-radius: 14px; padding: 24px; margin: 18px 0; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
+label { display: grid; gap: 6px; font-size: 14px; margin-bottom: 14px; }
+input, select, textarea { border: 1px solid #c8d4e4; border-radius: 8px; padding: 10px 12px; background: white; color: #0d1b3e; min-width: 0; width: 100%; }
+textarea { min-height: 100px; }
+button, .button { border-radius: 8px; padding: 9px 15px; background: #1565c0; color: white; border: 1px solid transparent; font-size: 14px; cursor: pointer; display: inline-block; }
+button.secondary { background: white; color: #1565c0; border-color: #c8d4e4; }
+button.danger { background: #b91c1c; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid #1565c0; outline-offset: 2px; }
+.error { padding: 14px; background: #fef2f2; color: #b91c1c; border-radius: 8px; margin: 14px 0; }
+.success { padding: 14px; background: #f0fdf4; color: #15803d; border-radius: 8px; margin: 14px 0; }
+.empty { padding: 32px; text-align: center; color: #5a6a85; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { padding: 14px 12px; border-bottom: 1px solid #edf2fa; text-align: left; }
+th { color: #5a6a85; font-weight: 600; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.badge { display: inline-block; background: #ebf3ff; color: #1565c0; padding: 4px 9px; border-radius: 20px; white-space: nowrap; }
+.stat { font-size: 32px; font-weight: 700; color: #1565c0; }
+.clinical-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+@media (max-width: 640px) { .page { padding: 16px; } .card { padding: 16px; } }

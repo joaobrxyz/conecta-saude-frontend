@@ -1,0 +1,28 @@
+<section class="page">
+  <h1>{{ mode === 'record' ? 'Prontuário' : 'Prescrições' }}</h1>
+  <div class="toolbar"><button class="secondary" (click)="load()" [disabled]="loading || busy">Atualizar</button></div>
+  <p *ngIf="error" class="error" role="alert">{{ error }}</p><p *ngIf="success" class="success" role="status">{{ success }}</p>
+  <p *ngIf="loading" role="status">Carregando histórico…</p>
+  <ng-container *ngIf="!loading && !error">
+    <ng-container *ngIf="mode === 'record'">
+      <div class="card"><h2>Últimos sinais vitais registrados</h2>
+        <div *ngIf="vitals as v" class="grid"><p>Peso: <strong>{{ v.weightKg ?? 'Não informado' }}</strong> kg</p><p>Altura: <strong>{{ v.heightMeters ?? 'Não informada' }}</strong> m</p><p>Pressão: <strong>{{ v.bloodPressure || 'Não informada' }}</strong></p></div>
+        <p *ngIf="!vitals" class="muted">Ainda não há sinais vitais registrados.</p>
+      </div>
+      <article *ngFor="let r of records" class="card"><span class="muted">{{ r.date | date:'dd/MM/yyyy HH:mm' }} · {{ r.doctorName }} · {{ r.doctorSpecialty }}</span><h2>{{ r.recordTitle }}</h2><p class="clinical-text">{{ r.clinicalDescription }}</p><div class="toolbar"><button class="secondary" (click)="open(r.id)" [disabled]="busy">Ver detalhes</button></div></article>
+      <p *ngIf="!records.length" class="empty">Nenhum atendimento registrado.</p>
+      <article *ngIf="detail as d" class="card"><h2>{{ d.recordTitle }}</h2><p class="clinical-text">{{ d.clinicalDescription }}</p>
+        <div *ngIf="d.vitals as v" class="toolbar"><span>Peso: {{ v.weightKg ?? '—' }} kg</span><span>Altura: {{ v.heightMeters ?? '—' }} m</span><span>Pressão: {{ v.bloodPressure || '—' }}</span></div>
+        <div *ngFor="let p of d.prescriptions" class="card"><strong>{{ p.medicationName }} — {{ p.dosage }}</strong><p class="clinical-text">{{ p.instructions }}</p><p>Válida até {{ p.validUntil | date:'dd/MM/yyyy' }}</p></div>
+        <ng-container *ngIf="auth.claims?.role === 'MEDICO' && d.doctorId === auth.claims?.sub"><h2>Notas privadas</h2><p class="clinical-text">{{ d.privateNotes || 'Sem notas.' }}</p><label>Adicionar adendo<textarea [(ngModel)]="addendum"></textarea></label><button (click)="saveAddendum()" [disabled]="busy || !addendum.trim()">Salvar adendo</button></ng-container>
+        <div class="toolbar"><button class="secondary" (click)="detail = null">Fechar detalhes</button></div>
+      </article>
+    </ng-container>
+    <ng-container *ngIf="mode === 'prescriptions'">
+      <label>Validade<select [(ngModel)]="filter"><option value="">Todas</option><option value="active">Válidas</option><option value="expired">Vencidas</option></select></label>
+      <article *ngFor="let p of visiblePrescriptions" class="card"><span class="badge">{{ p.isActive ? 'Válida' : 'Vencida' }}</span><h2>{{ p.medicationName }} — {{ p.dosage }}</h2><p class="clinical-text">{{ p.instructions }}</p><p class="muted">{{ p.doctorName }} · {{ p.doctorSpecialty }}</p><p>Emitida em {{ p.issueDate | date:'dd/MM/yyyy' }} · Válida até {{ p.validUntil | date:'dd/MM/yyyy' }}</p></article>
+      <p *ngIf="!visiblePrescriptions.length" class="empty">Nenhuma prescrição encontrada.</p>
+      <p class="muted">Para renovar uma receita, agende uma consulta com seu médico.</p>
+    </ng-container>
+  </ng-container>
+</section>

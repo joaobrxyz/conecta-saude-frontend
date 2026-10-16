@@ -1,3 +1,4 @@
+import { portalTestProviders } from '../../../core/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { Prescriptions } from './prescriptions';
@@ -8,6 +9,7 @@ describe('Prescriptions', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      providers: portalTestProviders('PACIENTE'),
       imports: [Prescriptions]
     })
     .compileComponents();
