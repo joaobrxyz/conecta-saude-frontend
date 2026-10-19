@@ -1,0 +1,53 @@
+<section class="page">
+  <h1>Visão geral</h1>
+  <p class="muted">Acompanhe suas consultas e os dados da clínica.</p>
+
+  <!-- Barra de Ferramentas -->
+  <div class="toolbar">
+    <button (click)="load()" [disabled]="loading" class="secondary">Atualizar</button>
+    <a class="button" [routerLink]="agenda">Ver consultas</a>
+    <a *ngIf="role === 'PACIENTE'" class="button" routerLink="/paciente/agendar">Agendar consulta</a>
+  </div>
+
+  <!-- Alertas de Status -->
+  <p *ngIf="error" role="alert" class="error">{{ error }}</p>
+  <p *ngIf="loading" role="status">Carregando painel…</p>
+
+  <ng-container *ngIf="!loading && !error">
+    
+    <!-- Cards de Estatísticas Dinâmicas -->
+    <div class="grid">
+      <div class="card" *ngFor="let stat of stats">
+        <p class="muted">{{ stat.label }}</p>
+        <p class="stat">{{ stat.value }}</p>
+      </div>
+    </div>
+
+    <!-- Tabela de Próximas Consultas -->
+    <div class="card">
+      <h2>Próximas consultas</h2>
+      <div class="table-wrap">
+        <table *ngIf="upcoming.length">
+          <thead>
+            <tr>
+              <th>Data e hora</th>
+              <th>Médico</th>
+              <th *ngIf="role !== 'PACIENTE'">Paciente</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let a of upcoming">
+              <td>{{ a.dataHoraConsulta | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ doctorName(a.doctorId) }}</td>
+              <td *ngIf="role !== 'PACIENTE'">{{ patientName(a.patientId) }}</td>
+              <td><span class="badge">{{ labels[a.status] }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p *ngIf="!upcoming.length" class="empty">Não há próximas consultas.</p>
+    </div>
+
+  </ng-container>
+</section>

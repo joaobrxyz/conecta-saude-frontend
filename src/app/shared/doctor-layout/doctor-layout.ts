@@ -13,6 +13,7 @@ export class DoctorLayout implements OnInit {
     { id: 'agenda', label: 'Minha Agenda', icon: 'bi-calendar-week', route: '/medico/agenda' },
     { id: 'pacientes', label: 'Pacientes', icon: 'bi-people', route: '/medico/pacientes' },
     { id: 'fila', label: 'Fila de Espera', icon: 'bi-clock-history', route: '/medico/fila' },
+    { id: 'exames', label: 'Exames', icon: 'bi-file-earmark-medical', route: '/medico/exames' },
     { id: 'config', label: 'Configurações', icon: 'bi-gear', route: '/medico/configuracoes' },
   ];
   get userName() { return this.profile.user()?.nome ?? 'Carregando perfil…'; }

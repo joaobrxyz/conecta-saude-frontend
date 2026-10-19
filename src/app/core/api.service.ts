@@ -1,7 +1,7 @@
 import { Injectable, inject, InjectionToken } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { expand, map, reduce, EMPTY } from 'rxjs';
-import { Appointment, AppointmentRequest, AppointmentStatus, Doctor, MedicalRecord, Page, Patient, Prescription, RecordRequest, RecordSummary, Resource, Specialty, User, UserInput, Vitals } from './api.models';
+import { Appointment, AppointmentRequest, AppointmentStatus, Doctor, Exam, MedicalRecord, Page, Patient, Prescription, RecordRequest, RecordSummary, Resource, Specialty, User, UserInput, Vitals } from './api.models';
 
 export const API_URL = new InjectionToken<string>('API_URL', { providedIn: 'root', factory: () => '/api' });
 
@@ -37,6 +37,12 @@ export class ApiService {
   prescriptions(id: string) { return this.http.get<Prescription[]>(`${this.url}/records/patient/${id}/prescriptions`); }
   createRecord(data: RecordRequest) { return this.http.post<RecordSummary>(`${this.url}/records`, data); }
   addendum(id: string, text: string) { return this.http.patch<void>(`${this.url}/records/${id}/addendum`, text, { headers: { 'Content-Type': 'text/plain' } }); }
+  exams(patientId: string) { return this.http.get<Exam[]>(`${this.url}/exams/patient/${patientId}`); }
+  uploadExam(patientId: string, title: string, file: File) {
+    const data = new FormData(); data.set('patientId', patientId); data.set('title', title); data.set('file', file, file.name);
+    return this.http.post<Exam>(`${this.url}/exams`, data);
+  }
+  downloadExam(id: string) { return this.http.get(`${this.url}/exams/${id}/download`, { responseType: 'blob' }); }
 }
 
 export function errorMessage(error: unknown): string {

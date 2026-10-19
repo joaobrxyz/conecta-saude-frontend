@@ -1,0 +1,81 @@
+<section class="page">
+  <!-- Cabeçalho Dinâmico -->
+  <h1>{{ doctorMode ? 'Resultados de exames' : 'Meus exames' }}</h1>
+  <p class="muted">
+    {{ doctorMode ? 'Envie resultados para o prontuário do paciente.' : 'Baixe os resultados enviados pelo seu médico.' }}
+  </p>
+  
+  <!-- Alertas de Status -->
+  <p *ngIf="error" class="error" role="alert">{{ error }}</p>
+  <p *ngIf="success" class="success" role="status">{{ success }}</p>
+
+  <!-- Formulário de Upload (Visível APENAS para Médicos) -->
+  <div *ngIf="doctorMode" class="card">
+    <h2>Enviar resultado</h2>
+    
+    <div class="grid">
+      <label>
+        Paciente
+        <!-- Ao trocar o paciente, ele dispara o load() automaticamente para carregar os exames dele -->
+        <select [(ngModel)]="patientId" (ngModelChange)="load()">
+          <option value="">Selecione</option>
+          <option *ngFor="let patient of patients" [value]="patient.id">
+            {{ patient.nome }} · {{ patient.cpf }}
+          </option>
+        </select>
+      </label>
+      
+      <label>
+        Título do exame
+        <input [(ngModel)]="title" maxlength="120" placeholder="Ex.: Hemograma completo">
+      </label>
+      
+      <label>
+        Arquivo (PDF, JPG ou PNG; até 8 MB)
+        <input type="file" accept="application/pdf,image/jpeg,image/png" (change)="chooseFile($event)">
+      </label>
+    </div>
+    
+    <button (click)="upload()" [disabled]="busy || !patientId || !title.trim() || !file">
+      Enviar exame
+    </button>
+  </div>
+
+  <!-- Barra de Ferramentas Superior -->
+  <div class="toolbar">
+    <button class="secondary" (click)="load()" [disabled]="loading || busy || !patientId">Atualizar</button>
+  </div>
+  
+  <p *ngIf="loading" role="status">Carregando exames…</p>
+
+  <!-- Tabela de Arquivos (Exames Disponíveis) -->
+  <div *ngIf="!loading && patientId" class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Exame</th>
+          <th>Arquivo</th>
+          <th>Enviado em</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let exam of exams">
+          <td><strong>{{ exam.title }}</strong></td>
+          <td>
+            {{ exam.fileName }} 
+            <!-- Função fileSize() chamada do TypeScript para formatar KB/MB -->
+            <span class="muted">({{ fileSize(exam.size) }})</span>
+          </td>
+          <td>{{ exam.uploadedAt | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td>
+            <button class="secondary" (click)="download(exam)" [disabled]="busy">Baixar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- Estado Vazio -->
+  <p *ngIf="!loading && patientId && !exams.length" class="empty">Nenhum exame disponível.</p>
+</section>

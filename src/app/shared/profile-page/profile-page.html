@@ -1,0 +1,59 @@
+<section class="page">
+  <h1>Meu perfil</h1>
+  <p class="muted">Atualize seus dados de contato.</p>
+
+  <!-- Alertas -->
+  <p *ngIf="error" role="alert" class="error">{{ error }}</p>
+  <p *ngIf="success" role="status" class="success">{{ success }}</p>
+
+  <!-- Estado de Carregamento -->
+  <p *ngIf="loading">Carregando perfil…</p>
+  <button *ngIf="error && !loaded" (click)="ngOnInit()">Tentar novamente</button>
+
+  <!-- Formulário de Perfil -->
+  <form *ngIf="loaded" class="card" #profile="ngForm" (ngSubmit)="save()">
+    <fieldset [disabled]="busy">
+      <div class="grid">
+        <label>
+          Nome
+          <input name="nome" [(ngModel)]="form.nome" required>
+        </label>
+        <label>
+          E-mail
+          <input name="email" type="email" [(ngModel)]="form.email" required email>
+        </label>
+        <label>
+          Telefone
+          <input name="telefone" type="tel" [(ngModel)]="form.telefone" required>
+        </label>
+      </div>
+      <button [disabled]="profile.invalid || busy">Salvar perfil</button>
+    </fieldset>
+  </form>
+
+  <!-- Formulário de Senha -->
+  <form class="card" #password="ngForm" (ngSubmit)="changePassword()">
+    <h2>Alterar senha</h2>
+    <fieldset [disabled]="busy">
+      <label>
+        Senha atual
+        <input type="password" name="current" [(ngModel)]="current" autocomplete="current-password" required>
+      </label>
+      <label>
+        Nova senha
+        <input type="password" name="newPassword" [(ngModel)]="newPassword" autocomplete="new-password" minlength="6" required>
+      </label>
+      <label>
+        Confirmar nova senha
+        <input type="password" name="confirmation" [(ngModel)]="confirmation" autocomplete="new-password" required>
+      </label>
+      <button [disabled]="password.invalid || busy || newPassword !== confirmation">Alterar senha</button>
+    </fieldset>
+  </form>
+
+  <!-- Preferências -->
+  <div class="card">
+    <h2>Preferências e notificações</h2>
+    <p class="muted">A personalização de notificações e as configurações gerais da clínica ainda não estão disponíveis.</p>
+  </div>
+</section>

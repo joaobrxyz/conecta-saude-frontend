@@ -1,6 +1,6 @@
 import { authGuard, childAuthGuard } from './core/auth.guard';
 import { AccountPage } from './features/auth/account-page';
-import { AppointmentsPage } from './shared/appointments-page';
+import { AppointmentsPage } from './shared/appointments-page/appointments-page';
 import { Routes } from '@angular/router';
 import { Login } from './features/auth/login/login';
 import { Dashboard } from './features/patient/dashboard/dashboard';
@@ -17,6 +17,7 @@ import { Schedule } from './features/doctor/schedule/schedule';
 import { Patients as DoctorPatientsComponent } from './features/doctor/patients/patients';
 import { Queue as DoctorQueueComponent } from './features/doctor/queue/queue';
 import { Settings as DoctorSettingsComponent } from './features/doctor/settings/settings';
+import { DoctorExams } from './features/doctor/exams/exams';
 import { ReceptionLayout } from './shared/reception-layout/reception-layout';
 import { Dashboard as ReceptionDashboardComponent } from './features/reception/dashboard/dashboard';
 import { Agenda as ReceptionAgendaComponent } from './features/reception/agenda/agenda';
@@ -57,6 +58,7 @@ export const routes: Routes = [
       { path: 'agenda', component: Schedule },
       { path: 'pacientes', component: DoctorPatientsComponent },
       { path: 'fila', component: DoctorQueueComponent },
+      { path: 'exames', component: DoctorExams },
       { path: 'configuracoes', component: DoctorSettingsComponent }
     ]
   },

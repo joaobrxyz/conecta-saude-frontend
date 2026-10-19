@@ -16,6 +16,7 @@ export interface Prescription extends PrescriptionInput { doctorName: string; do
 export interface RecordSummary { id: string; date: string; recordTitle: string; doctorName: string; doctorSpecialty: string; clinicalDescription: string; }
 export interface MedicalRecord { id: string; patientId: string; appointmentId: string; doctorId: string; doctorName: string; doctorSpecialty: string; recordTitle: string; clinicalDescription: string; privateNotes?: string | null; vitals: Vitals | null; prescriptions: PrescriptionInput[] | null; createdAt: string; }
 export interface RecordRequest { patientId: string; appointmentId: string; recordTitle: string; clinicalDescription: string; privateNotes?: string; vitals?: Vitals; prescriptions: PrescriptionInput[]; }
+export interface Exam { id: string; title: string; fileName: string; contentType: string; size: number; uploadedAt: string; }
 export interface UserInput { nome: string; email: string; telefone: string; senha?: string; cpf?: string; crm?: string; especialidadeId?: number; }
 export const ROLE_PATH: Record<Role, string> = { PACIENTE: 'paciente', MEDICO: 'medico', RECEPCAO: 'recepcao', ADMIN: 'admin' };
 export const ROLE_RESOURCE: Record<Role, Resource> = { PACIENTE: 'patients', MEDICO: 'doctors', RECEPCAO: 'receptionists', ADMIN: 'admins' };
